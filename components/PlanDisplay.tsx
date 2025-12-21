@@ -26,6 +26,7 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
   const [swappingTarget, setSwappingTarget] = useState<{day: number, type: 'breakfast' | 'lunch' | 'dinner' | 'snack'} | null>(null);
   const [alternatives, setAlternatives] = useState<Meal[]>([]);
   const [isLoadingAlternatives, setIsLoadingAlternatives] = useState(false);
+  const [selectedMealDetail, setSelectedMealDetail] = useState<{day: number, type: string, meal: Meal} | null>(null);
 
   useEffect(() => {
     setLocalDays(plan.days);
@@ -289,9 +290,9 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
                       </div>
                       
                       <div className="space-y-4">
-                        <CalendarMeal type="B" meal={day.breakfast} color="text-amber-600" onClick={() => initiateSwap(day.day, 'breakfast')} />
-                        <CalendarMeal type="L" meal={day.lunch} color="text-blue-600" onClick={() => initiateSwap(day.day, 'lunch')} />
-                        <CalendarMeal type="D" meal={day.dinner} color="text-rose-600" onClick={() => initiateSwap(day.day, 'dinner')} />
+                        <CalendarMeal type="B" meal={day.breakfast} color="text-amber-600" onClick={() => setSelectedMealDetail({day: day.day, type: 'breakfast', meal: day.breakfast})} />
+                        <CalendarMeal type="L" meal={day.lunch} color="text-blue-600" onClick={() => setSelectedMealDetail({day: day.day, type: 'lunch', meal: day.lunch})} />
+                        <CalendarMeal type="D" meal={day.dinner} color="text-rose-600" onClick={() => setSelectedMealDetail({day: day.day, type: 'dinner', meal: day.dinner})} />
                         {showSnacks && day.snack && (
                           <div className="pt-2 border-t border-dashed border-gray-100">
                              <p className="text-[10px] font-medium text-slate-500 truncate">{day.snack.title}</p>
@@ -347,6 +348,47 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
       </div>
 
       {/* Alternative Swap Modal */}
+      {/* Meal Detail Modal */}
+      {selectedMealDetail && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/40 backdrop-blur-md">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-100">
+            <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
+              <div>
+                <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Day {selectedMealDetail.day} • {selectedMealDetail.type}</p>
+                <h3 className="text-2xl font-serif-brand text-brand-dark mt-1">{selectedMealDetail.meal.title}</h3>
+              </div>
+              <button onClick={() => setSelectedMealDetail(null)} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-slate-500 hover:text-brand-dark transition-colors">✕</button>
+            </div>
+
+            <div className="p-8">
+              <div className="mb-6">
+                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Prep Notes</h4>
+                <p className="text-slate-600 leading-relaxed">{selectedMealDetail.meal.prepNotes}</p>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    const type = selectedMealDetail.type as 'breakfast' | 'lunch' | 'dinner' | 'snack';
+                    initiateSwap(selectedMealDetail.day, type);
+                    setSelectedMealDetail(null);
+                  }}
+                  className="flex-1 py-3 px-4 bg-[#1A1F2B] text-white rounded-xl font-bold hover:brightness-110 transition-all"
+                >
+                  Swap Meal
+                </button>
+                <button
+                  onClick={() => setSelectedMealDetail(null)}
+                  className="flex-1 py-3 px-4 border-2 border-gray-200 text-slate-600 rounded-xl font-bold hover:border-gray-300 transition-all"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {swappingTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/40 backdrop-blur-md">
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-100">
