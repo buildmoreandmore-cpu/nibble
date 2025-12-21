@@ -48,6 +48,8 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
   // Filter meals by total time (prep + cook)
   const meetsTimeFilter = (meal: Meal): boolean => {
     if (timeFilter === 'all') return true;
+    // If meal has no time data, dim it when filter is active (we don't know the time)
+    if (!meal.prepTime && !meal.cookTime) return false;
     const totalTime = parseTime(meal.prepTime) + parseTime(meal.cookTime);
     const maxTime = parseInt(timeFilter, 10);
     return totalTime <= maxTime;
