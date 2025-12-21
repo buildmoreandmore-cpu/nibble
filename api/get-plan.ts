@@ -15,7 +15,7 @@ export default async function handler(request: Request) {
   }
 
   try {
-    const { email, mealPlan, prefs } = await request.json();
+    const { email } = await request.json();
 
     if (!email) {
       return new Response(JSON.stringify({ error: 'Email required' }), {
@@ -24,24 +24,30 @@ export default async function handler(request: Request) {
       });
     }
 
-    const timestamp = new Date().toISOString();
+    // Fetch stored plan by email
+    const data = await redis.get(`plan:${email}`);
 
-    // Store full user data (meal plan + prefs) with email as key
-    if (mealPlan && prefs) {
-      await redis.set(`plan:${email}`, JSON.stringify({ mealPlan, prefs, timestamp }));
+    if (!data) {
+      return new Response(JSON.stringify({ exists: false }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
-    // Keep email tracking for admin purposes
-    await redis.hset('emails', { [email]: timestamp });
-    await redis.lpush('email_list', JSON.stringify({ email, timestamp }));
+    // Parse if string, otherwise use as-is
+    const parsed = typeof data === 'string' ? JSON.parse(data) : data;
 
-    return new Response(JSON.stringify({ success: true }), {
+    return new Response(JSON.stringify({
+      exists: true,
+      mealPlan: parsed.mealPlan,
+      prefs: parsed.prefs,
+    }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error('Error saving email:', error);
-    return new Response(JSON.stringify({ error: 'Failed to save email' }), {
+    console.error('Error fetching plan:', error);
+    return new Response(JSON.stringify({ error: 'Failed to fetch plan' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });
