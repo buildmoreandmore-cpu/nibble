@@ -110,12 +110,59 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
         </div>
         
         <div className="flex items-center gap-4">
-          <button 
-            onClick={() => window.print()}
+          <button
+            onClick={() => {
+              // Generate downloadable text content
+              const weekDays = localDays.filter(d => Math.ceil(d.day / 7) === selectedWeek);
+              const weekData = plan.weeks.find(w => w.week === selectedWeek);
+
+              let content = `NIBBLE MEAL PLAN - WEEK ${selectedWeek}\n`;
+              content += `Generated for: ${userPrefs.age} old\n`;
+              content += `${'='.repeat(50)}\n\n`;
+
+              weekDays.forEach(day => {
+                content += `DAY ${day.day}\n`;
+                content += `-`.repeat(30) + `\n`;
+                content += `Breakfast: ${day.breakfast.title}\n`;
+                content += `  → ${day.breakfast.prepNotes}\n\n`;
+                content += `Lunch: ${day.lunch.title}\n`;
+                content += `  → ${day.lunch.prepNotes}\n\n`;
+                content += `Dinner: ${day.dinner.title}\n`;
+                content += `  → ${day.dinner.prepNotes}\n\n`;
+                if (day.snack) {
+                  content += `Snack: ${day.snack.title}\n`;
+                  content += `  → ${day.snack.prepNotes}\n`;
+                }
+                content += `\n`;
+              });
+
+              if (weekData) {
+                content += `\nGROCERY LIST - WEEK ${selectedWeek}\n`;
+                content += `${'='.repeat(50)}\n`;
+                weekData.groceryList.forEach(item => {
+                  content += `☐ ${item}\n`;
+                });
+
+                content += `\nBATCH PREP TIPS\n`;
+                content += `-`.repeat(30) + `\n`;
+                weekData.batchPrepTips.forEach((tip, i) => {
+                  content += `${i + 1}. ${tip}\n`;
+                });
+              }
+
+              // Download as text file
+              const blob = new Blob([content], { type: 'text/plain' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `nibble-week-${selectedWeek}-meal-plan.txt`;
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
             className="flex items-center gap-2 px-4 py-2 bg-brand-dark text-white rounded-lg text-sm font-bold shadow-lg hover:brightness-110 transition-all active:scale-95"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-            Print Week
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            Download Week
           </button>
         </div>
       </div>
