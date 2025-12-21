@@ -230,7 +230,7 @@ const App: React.FC = () => {
           </form>
 
           <p className="mt-6 text-sm text-slate-400 font-medium">
-            We'll also send you a printable PDF version.
+            You can download a printable PDF of your plan inside.
           </p>
         </div>
       </div>
