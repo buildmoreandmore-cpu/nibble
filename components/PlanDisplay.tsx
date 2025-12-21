@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { FullMealPlan, DailyPlan, WeeklyData, Meal, UserPreferences } from '../types';
 import { getMealAlternatives } from '../services/geminiService';
+import { jsPDF } from 'jspdf';
 
 interface PlanDisplayProps {
   plan: FullMealPlan;
@@ -113,57 +114,142 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
         <div className="flex items-center gap-4">
           <button
             onClick={() => {
-              // Generate downloadable text content
               const weekDays = localDays.filter(d => Math.ceil(d.day / 7) === selectedWeek);
               const weekData = plan.weeks.find(w => w.week === selectedWeek);
 
-              let content = `YUMLI MEAL PLAN - WEEK ${selectedWeek}\n`;
-              content += `Generated for: ${userPrefs.age} old\n`;
-              content += `${'='.repeat(50)}\n\n`;
+              const doc = new jsPDF();
+              const pageWidth = doc.internal.pageSize.getWidth();
+              let y = 20;
 
-              weekDays.forEach(day => {
-                content += `DAY ${day.day}\n`;
-                content += `-`.repeat(30) + `\n`;
-                content += `Breakfast: ${day.breakfast.title}\n`;
-                content += `  → ${day.breakfast.prepNotes}\n\n`;
-                content += `Lunch: ${day.lunch.title}\n`;
-                content += `  → ${day.lunch.prepNotes}\n\n`;
-                content += `Dinner: ${day.dinner.title}\n`;
-                content += `  → ${day.dinner.prepNotes}\n\n`;
-                if (day.snack) {
-                  content += `Snack: ${day.snack.title}\n`;
-                  content += `  → ${day.snack.prepNotes}\n`;
+              // Header
+              doc.setFontSize(24);
+              doc.setTextColor(26, 31, 43);
+              doc.text('YUMLI', pageWidth / 2, y, { align: 'center' });
+              y += 10;
+
+              doc.setFontSize(14);
+              doc.setTextColor(100, 100, 100);
+              doc.text(`Your ${userPrefs.age} old's Meal Plan`, pageWidth / 2, y, { align: 'center' });
+              y += 8;
+
+              doc.setFontSize(12);
+              doc.text(`Week ${selectedWeek} of 4`, pageWidth / 2, y, { align: 'center' });
+              y += 10;
+
+              doc.setFontSize(11);
+              doc.setTextColor(245, 158, 11);
+              doc.text(`"You've got this!" ✨`, pageWidth / 2, y, { align: 'center' });
+              y += 15;
+
+              // Divider
+              doc.setDrawColor(230, 230, 230);
+              doc.line(20, y, pageWidth - 20, y);
+              y += 15;
+
+              // Daily meals
+              weekDays.forEach((day, idx) => {
+                if (y > 250) {
+                  doc.addPage();
+                  y = 20;
                 }
-                content += `\n`;
-              });
 
-              if (weekData) {
-                content += `\nGROCERY LIST - WEEK ${selectedWeek}\n`;
-                content += `${'='.repeat(50)}\n`;
-                weekData.groceryList.forEach(item => {
-                  content += `☐ ${item}\n`;
+                doc.setFontSize(14);
+                doc.setTextColor(26, 31, 43);
+                doc.text(`Day ${day.day}`, 20, y);
+                y += 8;
+
+                const meals = [
+                  { label: 'Breakfast', meal: day.breakfast, color: [245, 158, 11] },
+                  { label: 'Lunch', meal: day.lunch, color: [59, 130, 246] },
+                  { label: 'Dinner', meal: day.dinner, color: [244, 63, 94] },
+                ];
+
+                if (day.snack) {
+                  meals.push({ label: 'Snack', meal: day.snack, color: [34, 197, 94] });
+                }
+
+                meals.forEach(({ label, meal, color }) => {
+                  doc.setFontSize(10);
+                  doc.setTextColor(color[0], color[1], color[2]);
+                  doc.text(label + ':', 25, y);
+                  doc.setTextColor(60, 60, 60);
+                  doc.text(meal.title, 50, y);
+                  y += 5;
+                  doc.setFontSize(9);
+                  doc.setTextColor(120, 120, 120);
+                  const prepLines = doc.splitTextToSize(`→ ${meal.prepNotes}`, pageWidth - 60);
+                  doc.text(prepLines, 30, y);
+                  y += prepLines.length * 4 + 3;
                 });
 
-                content += `\nBATCH PREP TIPS\n`;
-                content += `-`.repeat(30) + `\n`;
+                y += 8;
+              });
+
+              // Grocery List
+              if (weekData) {
+                if (y > 200) {
+                  doc.addPage();
+                  y = 20;
+                }
+
+                doc.setFontSize(14);
+                doc.setTextColor(26, 31, 43);
+                doc.text(`Grocery List - Week ${selectedWeek}`, 20, y);
+                y += 10;
+
+                doc.setFontSize(10);
+                doc.setTextColor(60, 60, 60);
+                weekData.groceryList.forEach(item => {
+                  if (y > 270) {
+                    doc.addPage();
+                    y = 20;
+                  }
+                  doc.text(`☐  ${item}`, 25, y);
+                  y += 6;
+                });
+
+                y += 10;
+
+                // Batch Prep Tips
+                if (y > 230) {
+                  doc.addPage();
+                  y = 20;
+                }
+
+                doc.setFontSize(14);
+                doc.setTextColor(26, 31, 43);
+                doc.text('Batch Prep Tips', 20, y);
+                y += 10;
+
+                doc.setFontSize(10);
+                doc.setTextColor(60, 60, 60);
                 weekData.batchPrepTips.forEach((tip, i) => {
-                  content += `${i + 1}. ${tip}\n`;
+                  if (y > 270) {
+                    doc.addPage();
+                    y = 20;
+                  }
+                  const tipLines = doc.splitTextToSize(`${i + 1}. ${tip}`, pageWidth - 50);
+                  doc.text(tipLines, 25, y);
+                  y += tipLines.length * 5 + 3;
                 });
               }
 
-              // Download as text file
-              const blob = new Blob([content], { type: 'text/plain' });
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement('a');
-              a.href = url;
-              a.download = `yumli-week-${selectedWeek}-meal-plan.txt`;
-              a.click();
-              URL.revokeObjectURL(url);
+              // Footer message
+              if (y > 260) {
+                doc.addPage();
+                y = 20;
+              }
+              y += 10;
+              doc.setFontSize(11);
+              doc.setTextColor(100, 100, 100);
+              doc.text('Remember: fed is best. You\'re doing amazing! 💛', pageWidth / 2, y, { align: 'center' });
+
+              doc.save(`yumli-week-${selectedWeek}-meal-plan.pdf`);
             }}
             className="flex items-center gap-2 px-4 py-2 bg-[#1A1F2B] text-white rounded-lg text-sm font-bold shadow-lg hover:brightness-110 transition-all active:scale-95"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-            Download Week
+            Download PDF
           </button>
         </div>
       </div>
