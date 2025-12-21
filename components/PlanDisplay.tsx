@@ -125,7 +125,7 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
         <div className="w-72 border-r border-gray-100 bg-white overflow-y-auto flex flex-col p-6 gap-8 hidden lg:flex">
           <div className="space-y-4">
             <div className="w-16 h-16 bg-[#FFF9E6] rounded-2xl flex items-center justify-center text-3xl shadow-inner border border-[#FFE7A3]">👶</div>
-            <h2 className="text-3xl font-serif-brand leading-tight">Plan for {userPrefs.age} Human</h2>
+            <h2 className="text-3xl font-serif-brand leading-tight">Your {userPrefs.age} old's Plan</h2>
             <p className="text-slate-500 font-medium text-sm italic leading-relaxed">"Let's find the best month of eating yet."</p>
           </div>
 
