@@ -27,6 +27,9 @@ const App: React.FC = () => {
   const [affirmationIdx, setAffirmationIdx] = useState(0);
   const [mealPlan, setMealPlan] = useState<FullMealPlan | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [email, setEmail] = useState<string>('');
+  const [emailCaptured, setEmailCaptured] = useState<boolean>(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
 
   const [prefs, setPrefs] = useState<UserPreferences>({
     age: '',
@@ -62,6 +65,29 @@ const App: React.FC = () => {
 
   const handleNext = () => setStep(s => s + 1);
   const handlePrev = () => setStep(s => s - 1);
+
+  const validateEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const handleEmailSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setEmailError(null);
+
+    if (!email.trim()) {
+      setEmailError('Please enter your email address');
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setEmailError('Please enter a valid email address');
+      return;
+    }
+
+    // Here you would typically send the email to your backend
+    console.log('Email captured:', email);
+    setEmailCaptured(true);
+  };
 
   const handleSubmit = async () => {
     setIsLoading(true);
@@ -121,8 +147,63 @@ const App: React.FC = () => {
     );
   }
 
-  if (mealPlan) {
-    return <PlanDisplay plan={mealPlan} userPrefs={prefs} onReset={() => setMealPlan(null)} />;
+  if (mealPlan && !emailCaptured) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-white">
+        <div className="max-w-md w-full text-center">
+          <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-8">
+            <svg className="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"/>
+            </svg>
+          </div>
+
+          <h1 className="text-4xl md:text-5xl font-serif-brand text-brand-dark mb-4">
+            Your plan is ready!
+          </h1>
+
+          <p className="text-lg text-slate-500 mb-10 font-medium">
+            Enter your email to view your 30-day meal plan and get your weekly grocery lists.
+          </p>
+
+          <form onSubmit={handleEmailSubmit} className="space-y-4">
+            <div>
+              <input
+                type="email"
+                placeholder="Enter your email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={`w-full px-6 py-4 rounded-xl border-2 text-lg font-medium outline-none transition-all ${
+                  emailError
+                    ? 'border-red-300 focus:border-red-500'
+                    : 'border-gray-200 focus:border-brand-dark'
+                }`}
+              />
+              {emailError && (
+                <p className="text-red-500 text-sm font-medium mt-2 text-left">{emailError}</p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-[#2563EB] text-white py-4 rounded-xl font-bold text-lg hover:brightness-110 shadow-lg shadow-blue-200 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+            >
+              See My Plan
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+              </svg>
+            </button>
+          </form>
+
+          <p className="mt-6 text-sm text-slate-400 font-medium">
+            We'll also send you a printable PDF version.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (mealPlan && emailCaptured) {
+    return <PlanDisplay plan={mealPlan} userPrefs={prefs} onReset={() => { setMealPlan(null); setEmailCaptured(false); setEmail(''); }} />;
   }
 
   const FormHeader = () => (
