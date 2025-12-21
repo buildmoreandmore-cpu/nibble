@@ -290,7 +290,10 @@ const App: React.FC = () => {
 
   const FormHeader = () => (
     <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 mb-12">
-      <div className="flex items-center gap-3">
+      <div
+        onClick={() => setStep(0)}
+        className="flex items-center gap-3 cursor-pointer hover:opacity-70 transition-opacity"
+      >
         <div className="w-8 h-8 bg-brand-dark rounded-lg flex items-center justify-center text-white font-bold italic">Y</div>
         <span className="font-display font-bold text-lg tracking-tight">Yumli</span>
       </div>
