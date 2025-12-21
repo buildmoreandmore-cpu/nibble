@@ -279,18 +279,7 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
           </div>
 
           <div className="mt-auto pt-6">
-            <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="flex -space-x-2">
-                   <img className="w-6 h-6 rounded-full border-2 border-white" src="https://i.pravatar.cc/100?u=sarah" alt="" />
-                </div>
-                <p className="text-[10px] font-bold text-emerald-700 uppercase tracking-widest">Sarah, Mom of 2</p>
-              </div>
-              <p className="text-xs text-emerald-800 font-medium italic leading-snug">
-                "Actually doable for someone juggling life. The grocery list is a lifesaver."
-              </p>
             </div>
-          </div>
         </div>
 
         {/* Main Content Area */}
