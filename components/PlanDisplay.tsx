@@ -21,7 +21,13 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
   const isSurviving = userPrefs.cookingSituation === 'surviving';
   const [viewMode, setViewMode] = useState<'today' | 'calendar'>(isSurviving ? 'today' : 'calendar');
   const [selectedWeek, setSelectedWeek] = useState<number>(1);
-  const [localDays, setLocalDays] = useState<DailyPlan[]>(plan.days);
+  // Initialize with snacks array (convert legacy single snack to array)
+  const [localDays, setLocalDays] = useState<DailyPlan[]>(() =>
+    plan.days.map(day => ({
+      ...day,
+      snacks: day.snacks || (day.snack ? [day.snack] : [])
+    }))
+  );
   const [showSnacks, setShowSnacks] = useState(true);
   const [isShuffling, setIsShuffling] = useState(false);
   
@@ -63,12 +69,18 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
     setSelectedMealDetail(null);
   };
 
-  const handleAddSnack = (dayNum: number, snackTitle: string, snackNotes: string) => {
+  const handleAddSnack = (dayNum: number, snackTitle: string, snackNotes: string, prepTime?: string, cookTime?: string) => {
     setLocalDays(prev => prev.map(day => {
       if (day.day === dayNum) {
+        const newSnack: Meal = {
+          title: snackTitle,
+          prepNotes: snackNotes,
+          prepTime: prepTime || '5 mins',
+          cookTime: cookTime || '0 mins'
+        };
         return {
           ...day,
-          snack: { title: snackTitle, prepNotes: snackNotes }
+          snacks: [...(day.snacks || []), newSnack]
         };
       }
       return day;
@@ -222,15 +234,17 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
                   doc.text(`Day ${day.day}`, 20, y);
                   y += 8;
 
-                  const meals = [
-                    { label: 'Breakfast', meal: day.breakfast, color: [245, 158, 11] as [number, number, number] },
-                    { label: 'Lunch', meal: day.lunch, color: [59, 130, 246] as [number, number, number] },
-                    { label: 'Dinner', meal: day.dinner, color: [244, 63, 94] as [number, number, number] },
+                  const meals: { label: string, meal: Meal, color: [number, number, number] }[] = [
+                    { label: 'Breakfast', meal: day.breakfast, color: [245, 158, 11] },
+                    { label: 'Lunch', meal: day.lunch, color: [59, 130, 246] },
+                    { label: 'Dinner', meal: day.dinner, color: [244, 63, 94] },
                   ];
 
-                  if (day.snack) {
-                    meals.push({ label: 'Snack', meal: day.snack, color: [34, 197, 94] as [number, number, number] });
-                  }
+                  // Add all snacks
+                  (day.snacks || []).forEach((snack, idx) => {
+                    const label = (day.snacks || []).length > 1 ? `Snack ${idx + 1}` : 'Snack';
+                    meals.push({ label, meal: snack, color: [34, 197, 94] });
+                  });
 
                   meals.forEach(({ label, meal, color }) => {
                     doc.setFontSize(10);
@@ -396,10 +410,10 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
                   <TodayMealCard type="Breakfast" meal={currentDay.breakfast} icon="🍳" color="bg-amber-50 text-amber-700 border-amber-100" onSwap={() => initiateSwap(currentDay.day, 'breakfast')} onEdit={() => setSelectedMealDetail({day: currentDay.day, type: 'breakfast', meal: currentDay.breakfast})} />
                   <TodayMealCard type="Lunch" meal={currentDay.lunch} icon="🥪" color="bg-blue-50 text-blue-700 border-blue-100" onSwap={() => initiateSwap(currentDay.day, 'lunch')} onEdit={() => setSelectedMealDetail({day: currentDay.day, type: 'lunch', meal: currentDay.lunch})} />
                   <TodayMealCard type="Dinner" meal={currentDay.dinner} icon="🍲" color="bg-rose-50 text-rose-700 border-rose-100" onSwap={() => initiateSwap(currentDay.day, 'dinner')} onEdit={() => setSelectedMealDetail({day: currentDay.day, type: 'dinner', meal: currentDay.dinner})} />
-                  {showSnacks && currentDay.snack && (
-                    <TodayMealCard type="Snack" meal={currentDay.snack} icon="🍎" color="bg-emerald-50 text-emerald-700 border-emerald-100" onSwap={() => initiateSwap(currentDay.day, 'snack')} onEdit={() => setSelectedMealDetail({day: currentDay.day, type: 'snack', meal: currentDay.snack!})} />
-                  )}
-                  {showSnacks && !currentDay.snack && (
+                  {showSnacks && (currentDay.snacks || []).map((snack, idx) => (
+                    <TodayMealCard key={idx} type={`Snack ${(currentDay.snacks || []).length > 1 ? idx + 1 : ''}`} meal={snack} icon="🍎" color="bg-emerald-50 text-emerald-700 border-emerald-100" onSwap={() => initiateSwap(currentDay.day, 'snack')} onEdit={() => setSelectedMealDetail({day: currentDay.day, type: `snack-${idx}`, meal: snack})} />
+                  ))}
+                  {showSnacks && (
                     <button
                       onClick={() => setAddingSnack(currentDay.day)}
                       className="w-full py-4 border-2 border-dashed border-emerald-200 rounded-2xl text-emerald-500 font-bold hover:bg-emerald-50 hover:border-emerald-300 transition-all"
@@ -472,18 +486,19 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
                         <CalendarMeal type="L" meal={day.lunch} color="text-blue-600" dimmed={!meetsTimeFilter(day.lunch)} onClick={() => setSelectedMealDetail({day: day.day, type: 'lunch', meal: day.lunch})} />
                         <CalendarMeal type="D" meal={day.dinner} color="text-rose-600" dimmed={!meetsTimeFilter(day.dinner)} onClick={() => setSelectedMealDetail({day: day.day, type: 'dinner', meal: day.dinner})} />
                         {showSnacks && (
-                          <div className="pt-2 border-t border-dashed border-gray-100">
-                            {day.snack ? (
+                          <div className="pt-2 border-t border-dashed border-gray-100 space-y-1">
+                            {(day.snacks || []).map((snack, idx) => (
                               <p
-                                onClick={() => setSelectedMealDetail({day: day.day, type: 'snack', meal: day.snack!})}
+                                key={idx}
+                                onClick={() => setSelectedMealDetail({day: day.day, type: `snack-${idx}`, meal: snack})}
                                 className="text-[10px] font-medium text-slate-500 truncate cursor-pointer hover:text-emerald-600"
                               >
-                                🍎 {day.snack.title}
+                                🍎 {snack.title}
                               </p>
-                            ) : null}
+                            ))}
                             <button
                               onClick={() => setAddingSnack(day.day)}
-                              className="text-[10px] font-bold text-emerald-500 hover:text-emerald-600 mt-1"
+                              className="text-[10px] font-bold text-emerald-500 hover:text-emerald-600"
                             >
                               + Add Snack
                             </button>

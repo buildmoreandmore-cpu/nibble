@@ -25,7 +25,8 @@ export interface DailyPlan {
   breakfast: Meal;
   lunch: Meal;
   dinner: Meal;
-  snack?: Meal;
+  snack?: Meal; // Legacy single snack from API
+  snacks?: Meal[]; // Multiple snacks array
 }
 
 export interface WeeklyData {
