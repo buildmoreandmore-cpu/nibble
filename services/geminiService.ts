@@ -18,33 +18,21 @@ const getAI = () => {
 
 export const generateMealPlan = async (prefs: UserPreferences): Promise<FullMealPlan> => {
   const prompt = `
-    You are a supportive meal planning assistant for busy parents. Create a 30-day meal plan for a child.
-    
-    Child Details:
-    - Age: ${prefs.age}
-    - Eating Style: ${prefs.eatingStyle}
-    - Favorite Foods (Sprinkle in sparingly): ${prefs.favorites}
-    - Include more of: ${prefs.wantsMoreOf}
-    - ALLERGIES (STRICT NO): ${prefs.allergies}
-    - Avoid (Hate/Gag/Not ready): ${prefs.hatesGags}
-    - Cooking Situation: ${prefs.cookingSituation}
-    - Dietary Preferences: ${prefs.dietaryPreferences}
+    Create a 30-day meal plan for a ${prefs.age} child.
+
+    Eating Style: ${prefs.eatingStyle}
+    Favorites: ${prefs.favorites || 'none'}
+    ALLERGIES (AVOID): ${prefs.allergies || 'none'}
+    Dislikes: ${prefs.hatesGags || 'none'}
+    Cooking: ${prefs.cookingSituation}
 
     Rules:
-    1. 30 days of Breakfast, Lunch, and Dinner (plus a snack).
-    2. NO REPEATS for main meals (Breakfast/Lunch/Dinner).
-    3. CRITICAL - Match textures to age AND eating style:
-       - 6-9 months with purees: smooth purees only
-       - 9-12 months: soft mashed foods, small soft pieces
-       - 1 year+: soft table foods, small bite-sized pieces
-       - 18 months+: regular table food textures, cut appropriately
-       - 2+ years: family-style meals with age-appropriate cuts
-       - If eating style is "table-food" or "finger-foods", DO NOT suggest purees regardless of age (exception: naturally pureed foods like mashed potatoes, hummus, yogurt)
-    4. Simple prep notes for every meal.
-    5. Include prep time and cook time estimates for each meal (e.g., "5 mins", "10 mins", "15 mins", "20 mins", "30 mins"). Use "0 mins" for no-cook items.
-    6. Weekly grocery lists for 4 weeks.
-    7. Practical batch prep tips for each week based on the cooking situation.
-    8. Tone: Warm, supportive, empathetic, and realistic.
+    1. 30 days: Breakfast, Lunch, Dinner, Snack each day.
+    2. NO REPEATS for main meals.
+    3. Age-appropriate textures (purees for 6-9mo, soft foods for 1yr+, table food for 2yr+).
+    4. BRIEF prep notes (1 short sentence max, under 50 characters).
+    5. 4 weekly grocery lists (10 key items max each).
+    6. 2 batch prep tips per week max.
   `;
 
   // Always use ai.models.generateContent with model and contents as single parameter
@@ -66,9 +54,7 @@ export const generateMealPlan = async (prefs: UserPreferences): Promise<FullMeal
                   type: Type.OBJECT,
                   properties: {
                     title: { type: Type.STRING },
-                    prepNotes: { type: Type.STRING },
-                    prepTime: { type: Type.STRING },
-                    cookTime: { type: Type.STRING }
+                    prepNotes: { type: Type.STRING }
                   },
                   required: ["title", "prepNotes"]
                 },
@@ -76,9 +62,7 @@ export const generateMealPlan = async (prefs: UserPreferences): Promise<FullMeal
                   type: Type.OBJECT,
                   properties: {
                     title: { type: Type.STRING },
-                    prepNotes: { type: Type.STRING },
-                    prepTime: { type: Type.STRING },
-                    cookTime: { type: Type.STRING }
+                    prepNotes: { type: Type.STRING }
                   },
                   required: ["title", "prepNotes"]
                 },
@@ -86,9 +70,7 @@ export const generateMealPlan = async (prefs: UserPreferences): Promise<FullMeal
                   type: Type.OBJECT,
                   properties: {
                     title: { type: Type.STRING },
-                    prepNotes: { type: Type.STRING },
-                    prepTime: { type: Type.STRING },
-                    cookTime: { type: Type.STRING }
+                    prepNotes: { type: Type.STRING }
                   },
                   required: ["title", "prepNotes"]
                 },
@@ -96,9 +78,7 @@ export const generateMealPlan = async (prefs: UserPreferences): Promise<FullMeal
                   type: Type.OBJECT,
                   properties: {
                     title: { type: Type.STRING },
-                    prepNotes: { type: Type.STRING },
-                    prepTime: { type: Type.STRING },
-                    cookTime: { type: Type.STRING }
+                    prepNotes: { type: Type.STRING }
                   },
                   required: ["title", "prepNotes"]
                 }
