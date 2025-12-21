@@ -138,7 +138,7 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
 
               doc.setFontSize(11);
               doc.setTextColor(245, 158, 11);
-              doc.text(`"You've got this!" ✨`, pageWidth / 2, y, { align: 'center' });
+              doc.text(`"You've got this!"`, pageWidth / 2, y, { align: 'center' });
               y += 15;
 
               // Divider
@@ -177,7 +177,7 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
                   y += 5;
                   doc.setFontSize(9);
                   doc.setTextColor(120, 120, 120);
-                  const prepLines = doc.splitTextToSize(`→ ${meal.prepNotes}`, pageWidth - 60);
+                  const prepLines = doc.splitTextToSize(`> ${meal.prepNotes}`, pageWidth - 60);
                   doc.text(prepLines, 30, y);
                   y += prepLines.length * 4 + 3;
                 });
@@ -204,7 +204,7 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
                     doc.addPage();
                     y = 20;
                   }
-                  doc.text(`☐  ${item}`, 25, y);
+                  doc.text(`[ ]  ${item}`, 25, y);
                   y += 6;
                 });
 
@@ -242,7 +242,7 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
               y += 10;
               doc.setFontSize(11);
               doc.setTextColor(100, 100, 100);
-              doc.text('Remember: fed is best. You\'re doing amazing! 💛', pageWidth / 2, y, { align: 'center' });
+              doc.text('Remember: fed is best. You\'re doing amazing!', pageWidth / 2, y, { align: 'center' });
 
               doc.save(`yumli-week-${selectedWeek}-meal-plan.pdf`);
             }}
