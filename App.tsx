@@ -130,8 +130,9 @@ const App: React.FC = () => {
       const plan = await generateMealPlan(prefs);
       setMealPlan(plan);
     } catch (err: any) {
-      console.error(err);
-      setError("Oof, something went wrong. Let's try that again.");
+      console.error('Meal plan generation error:', err);
+      const errorMessage = err?.message || err?.toString() || "Unknown error";
+      setError(`Oof, something went wrong: ${errorMessage}`);
     } finally {
       setIsLoading(false);
     }
