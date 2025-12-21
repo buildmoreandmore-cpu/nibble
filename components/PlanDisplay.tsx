@@ -162,7 +162,7 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
               onClick={() => setViewMode('calendar')}
               className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all ${viewMode === 'calendar' ? 'bg-white shadow-sm text-brand-dark' : 'text-slate-500 hover:text-slate-700'}`}
             >
-              Month View
+              Weekly View
             </button>
           </div>
         </div>
