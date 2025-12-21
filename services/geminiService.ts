@@ -2,8 +2,19 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { UserPreferences, FullMealPlan, Meal } from "../types";
 
-// Always use the process.env.API_KEY directly for initialization as per coding guidelines
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Lazy initialization to prevent crashes when API key is not set
+let ai: GoogleGenAI | null = null;
+
+const getAI = () => {
+  if (!ai) {
+    const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      throw new Error("API key not configured. Please set GEMINI_API_KEY environment variable.");
+    }
+    ai = new GoogleGenAI({ apiKey });
+  }
+  return ai;
+};
 
 export const generateMealPlan = async (prefs: UserPreferences): Promise<FullMealPlan> => {
   const prompt = `
@@ -30,7 +41,7 @@ export const generateMealPlan = async (prefs: UserPreferences): Promise<FullMeal
   `;
 
   // Always use ai.models.generateContent with model and contents as single parameter
-  const response = await ai.models.generateContent({
+  const response = await getAI().models.generateContent({
     model: "gemini-3-flash-preview",
     contents: prompt,
     config: {
@@ -127,7 +138,7 @@ export const getMealAlternatives = async (
     Tone: Supportive and realistic.
   `;
 
-  const response = await ai.models.generateContent({
+  const response = await getAI().models.generateContent({
     model: "gemini-3-flash-preview",
     contents: prompt,
     config: {
