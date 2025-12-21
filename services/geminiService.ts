@@ -33,7 +33,13 @@ export const generateMealPlan = async (prefs: UserPreferences): Promise<FullMeal
     Rules:
     1. 30 days of Breakfast, Lunch, and Dinner (plus a snack).
     2. NO REPEATS for main meals (Breakfast/Lunch/Dinner).
-    3. Age-appropriate textures and portions based on the eating style.
+    3. CRITICAL - Match textures to age AND eating style:
+       - 6-9 months with purees: smooth purees only
+       - 9-12 months: soft mashed foods, small soft pieces
+       - 1 year+: soft table foods, small bite-sized pieces
+       - 18 months+: regular table food textures, cut appropriately
+       - 2+ years: family-style meals with age-appropriate cuts
+       - If eating style is "table-food" or "finger-foods", DO NOT suggest purees regardless of age (exception: naturally pureed foods like mashed potatoes, hummus, yogurt)
     4. Simple prep notes for every meal.
     5. Weekly grocery lists for 4 weeks.
     6. Practical batch prep tips for each week based on the cooking situation.
