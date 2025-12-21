@@ -70,7 +70,7 @@ export const generateMealPlan = async (prefs: UserPreferences): Promise<FullMeal
                     prepTime: { type: Type.STRING },
                     cookTime: { type: Type.STRING }
                   },
-                  required: ["title", "prepNotes", "prepTime", "cookTime"]
+                  required: ["title", "prepNotes"]
                 },
                 lunch: {
                   type: Type.OBJECT,
@@ -80,7 +80,7 @@ export const generateMealPlan = async (prefs: UserPreferences): Promise<FullMeal
                     prepTime: { type: Type.STRING },
                     cookTime: { type: Type.STRING }
                   },
-                  required: ["title", "prepNotes", "prepTime", "cookTime"]
+                  required: ["title", "prepNotes"]
                 },
                 dinner: {
                   type: Type.OBJECT,
@@ -90,7 +90,7 @@ export const generateMealPlan = async (prefs: UserPreferences): Promise<FullMeal
                     prepTime: { type: Type.STRING },
                     cookTime: { type: Type.STRING }
                   },
-                  required: ["title", "prepNotes", "prepTime", "cookTime"]
+                  required: ["title", "prepNotes"]
                 },
                 snack: {
                   type: Type.OBJECT,
@@ -100,7 +100,7 @@ export const generateMealPlan = async (prefs: UserPreferences): Promise<FullMeal
                     prepTime: { type: Type.STRING },
                     cookTime: { type: Type.STRING }
                   },
-                  required: ["title", "prepNotes", "prepTime", "cookTime"]
+                  required: ["title", "prepNotes"]
                 }
               },
               required: ["day", "breakfast", "lunch", "dinner", "snack"]
