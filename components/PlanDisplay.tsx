@@ -28,6 +28,46 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
   const [alternatives, setAlternatives] = useState<Meal[]>([]);
   const [isLoadingAlternatives, setIsLoadingAlternatives] = useState(false);
   const [selectedMealDetail, setSelectedMealDetail] = useState<{day: number, type: string, meal: Meal} | null>(null);
+  const [editingMeal, setEditingMeal] = useState<{day: number, type: string, title: string, prepNotes: string} | null>(null);
+  const [addingSnack, setAddingSnack] = useState<number | null>(null);
+
+  const handleSaveEdit = () => {
+    if (!editingMeal) return;
+    setLocalDays(prev => prev.map(day => {
+      if (day.day === editingMeal.day) {
+        const mealType = editingMeal.type as keyof DailyPlan;
+        return {
+          ...day,
+          [mealType]: { title: editingMeal.title, prepNotes: editingMeal.prepNotes }
+        };
+      }
+      return day;
+    }));
+    setEditingMeal(null);
+    setSelectedMealDetail(null);
+  };
+
+  const handleAddSnack = (dayNum: number, snackTitle: string, snackNotes: string) => {
+    setLocalDays(prev => prev.map(day => {
+      if (day.day === dayNum) {
+        return {
+          ...day,
+          snack: { title: snackTitle, prepNotes: snackNotes }
+        };
+      }
+      return day;
+    }));
+    setAddingSnack(null);
+  };
+
+  const suggestedSnacks = [
+    { title: 'Apple Slices with Almond Butter', prepNotes: 'Slice apple and serve with a small dollop of almond butter.' },
+    { title: 'Cheese Cubes', prepNotes: 'Cut cheese into small, easy-to-grab cubes.' },
+    { title: 'Banana Bites', prepNotes: 'Slice banana into bite-sized pieces.' },
+    { title: 'Yogurt with Berries', prepNotes: 'Mix plain yogurt with fresh berries.' },
+    { title: 'Veggie Sticks', prepNotes: 'Cut cucumber and carrots into sticks.' },
+    { title: 'Crackers with Hummus', prepNotes: 'Serve whole grain crackers with a side of hummus.' },
+  ];
 
   useEffect(() => {
     setLocalDays(plan.days);
@@ -380,9 +420,22 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
                         <CalendarMeal type="B" meal={day.breakfast} color="text-amber-600" onClick={() => setSelectedMealDetail({day: day.day, type: 'breakfast', meal: day.breakfast})} />
                         <CalendarMeal type="L" meal={day.lunch} color="text-blue-600" onClick={() => setSelectedMealDetail({day: day.day, type: 'lunch', meal: day.lunch})} />
                         <CalendarMeal type="D" meal={day.dinner} color="text-rose-600" onClick={() => setSelectedMealDetail({day: day.day, type: 'dinner', meal: day.dinner})} />
-                        {showSnacks && day.snack && (
+                        {showSnacks && (
                           <div className="pt-2 border-t border-dashed border-gray-100">
-                             <p className="text-[10px] font-medium text-slate-500 truncate">{day.snack.title}</p>
+                            {day.snack ? (
+                              <p
+                                onClick={() => setSelectedMealDetail({day: day.day, type: 'snack', meal: day.snack!})}
+                                className="text-[10px] font-medium text-slate-500 truncate cursor-pointer hover:text-emerald-600"
+                              >
+                                🍎 {day.snack.title}
+                              </p>
+                            ) : null}
+                            <button
+                              onClick={() => setAddingSnack(day.day)}
+                              className="text-[10px] font-bold text-emerald-500 hover:text-emerald-600 mt-1"
+                            >
+                              + Add Snack
+                            </button>
                           </div>
                         )}
                       </div>
@@ -448,29 +501,67 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
             </div>
 
             <div className="p-8">
-              <div className="mb-6">
-                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Prep Notes</h4>
-                <p className="text-slate-600 leading-relaxed">{selectedMealDetail.meal.prepNotes}</p>
-              </div>
+              {editingMeal ? (
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 block">Meal Name</label>
+                    <input
+                      type="text"
+                      value={editingMeal.title}
+                      onChange={(e) => setEditingMeal({...editingMeal, title: e.target.value})}
+                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#1A1F2B] outline-none font-medium"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 block">Prep Notes</label>
+                    <textarea
+                      value={editingMeal.prepNotes}
+                      onChange={(e) => setEditingMeal({...editingMeal, prepNotes: e.target.value})}
+                      rows={3}
+                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#1A1F2B] outline-none font-medium resize-none"
+                    />
+                  </div>
+                  <div className="flex gap-3">
+                    <button onClick={handleSaveEdit} className="flex-1 py-3 px-4 bg-[#1A1F2B] text-white rounded-xl font-bold hover:brightness-110 transition-all">
+                      Save Changes
+                    </button>
+                    <button onClick={() => setEditingMeal(null)} className="flex-1 py-3 px-4 border-2 border-gray-200 text-slate-600 rounded-xl font-bold hover:border-gray-300 transition-all">
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="mb-6">
+                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Prep Notes</h4>
+                    <p className="text-slate-600 leading-relaxed">{selectedMealDetail.meal.prepNotes}</p>
+                  </div>
 
-              <div className="flex gap-3">
-                <button
-                  onClick={() => {
-                    const type = selectedMealDetail.type as 'breakfast' | 'lunch' | 'dinner' | 'snack';
-                    initiateSwap(selectedMealDetail.day, type);
-                    setSelectedMealDetail(null);
-                  }}
-                  className="flex-1 py-3 px-4 bg-[#1A1F2B] text-white rounded-xl font-bold hover:brightness-110 transition-all"
-                >
-                  Swap Meal
-                </button>
-                <button
-                  onClick={() => setSelectedMealDetail(null)}
-                  className="flex-1 py-3 px-4 border-2 border-gray-200 text-slate-600 rounded-xl font-bold hover:border-gray-300 transition-all"
-                >
-                  Close
-                </button>
-              </div>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setEditingMeal({
+                        day: selectedMealDetail.day,
+                        type: selectedMealDetail.type,
+                        title: selectedMealDetail.meal.title,
+                        prepNotes: selectedMealDetail.meal.prepNotes
+                      })}
+                      className="flex-1 py-3 px-4 bg-[#1A1F2B] text-white rounded-xl font-bold hover:brightness-110 transition-all"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => {
+                        const type = selectedMealDetail.type as 'breakfast' | 'lunch' | 'dinner' | 'snack';
+                        initiateSwap(selectedMealDetail.day, type);
+                        setSelectedMealDetail(null);
+                      }}
+                      className="flex-1 py-3 px-4 border-2 border-gray-200 text-slate-600 rounded-xl font-bold hover:border-gray-300 transition-all"
+                    >
+                      Swap
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -510,6 +601,62 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
                   </button>
                 </>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Snack Modal */}
+      {addingSnack && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/40 backdrop-blur-md">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-100">
+            <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
+              <div>
+                <h3 className="text-2xl font-serif-brand text-brand-dark">Add Snack</h3>
+                <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">Day {addingSnack}</p>
+              </div>
+              <button onClick={() => setAddingSnack(null)} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-slate-500 hover:text-brand-dark transition-colors">✕</button>
+            </div>
+
+            <div className="p-8 space-y-4 max-h-[60vh] overflow-y-auto">
+              <p className="text-sm text-slate-500 font-medium mb-4">Pick a suggested snack or add your own:</p>
+              {suggestedSnacks.map((snack, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => handleAddSnack(addingSnack, snack.title, snack.prepNotes)}
+                  className="w-full text-left p-4 rounded-2xl border-2 border-gray-50 hover:border-emerald-400 hover:bg-emerald-50 transition-all group"
+                >
+                  <h4 className="font-bold text-brand-dark group-hover:text-emerald-600 mb-1">{snack.title}</h4>
+                  <p className="text-xs text-slate-500 italic">{snack.prepNotes}</p>
+                </button>
+              ))}
+              <div className="border-t border-gray-100 pt-4 mt-4">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Or add your own:</p>
+                <input
+                  type="text"
+                  placeholder="Snack name..."
+                  id="custom-snack-title"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-emerald-400 outline-none font-medium mb-2"
+                />
+                <input
+                  type="text"
+                  placeholder="Prep notes..."
+                  id="custom-snack-notes"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-emerald-400 outline-none font-medium mb-3"
+                />
+                <button
+                  onClick={() => {
+                    const titleEl = document.getElementById('custom-snack-title') as HTMLInputElement;
+                    const notesEl = document.getElementById('custom-snack-notes') as HTMLInputElement;
+                    if (titleEl?.value) {
+                      handleAddSnack(addingSnack, titleEl.value, notesEl?.value || '');
+                    }
+                  }}
+                  className="w-full py-3 bg-emerald-500 text-white rounded-xl font-bold hover:bg-emerald-600 transition-all"
+                >
+                  Add Custom Snack
+                </button>
+              </div>
             </div>
           </div>
         </div>
