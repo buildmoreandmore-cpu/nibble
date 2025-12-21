@@ -70,7 +70,7 @@ const App: React.FC = () => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
-  const handleEmailSubmit = (e: React.FormEvent) => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setEmailError(null);
 
@@ -84,8 +84,17 @@ const App: React.FC = () => {
       return;
     }
 
-    // Here you would typically send the email to your backend
-    console.log('Email captured:', email);
+    // Save email to database
+    try {
+      await fetch('/api/save-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+    } catch (err) {
+      console.error('Failed to save email:', err);
+    }
+
     setEmailCaptured(true);
   };
 
