@@ -388,6 +388,85 @@ const App: React.FC = () => {
             </div>
           </div>
         </main>
+
+        {/* Returning User Modal */}
+        {showReturningUserModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/40 backdrop-blur-md">
+            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-100">
+              <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
+                <div>
+                  <h3 className="text-2xl font-serif-brand text-brand-dark">Welcome back!</h3>
+                  <p className="text-slate-400 text-sm font-medium mt-1">Enter your email to retrieve your plan</p>
+                </div>
+                <button
+                  onClick={() => {
+                    setShowReturningUserModal(false);
+                    setEmailError(null);
+                    setEmail('');
+                  }}
+                  className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-slate-500 hover:text-brand-dark transition-colors"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <form onSubmit={handleReturningUserSubmit} className="p-8 space-y-4">
+                <div>
+                  <input
+                    type="email"
+                    placeholder="Enter your email address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className={`w-full px-6 py-4 rounded-xl border-2 text-lg font-medium outline-none transition-all ${
+                      emailError
+                        ? 'border-red-300 focus:border-red-500'
+                        : 'border-gray-200 focus:border-brand-dark'
+                    }`}
+                  />
+                  {emailError && (
+                    <p className="text-red-500 text-sm font-medium mt-2">{emailError}</p>
+                  )}
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isLoadingPlan}
+                  className="w-full bg-[#2563EB] text-white py-4 rounded-xl font-bold text-lg hover:brightness-110 shadow-lg shadow-blue-200 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {isLoadingPlan ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Finding your plan...
+                    </>
+                  ) : (
+                    <>
+                      Get My Plan
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                      </svg>
+                    </>
+                  )}
+                </button>
+
+                <p className="text-center text-sm text-slate-400 font-medium">
+                  Don't have a plan yet?{' '}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowReturningUserModal(false);
+                      setEmailError(null);
+                      setEmail('');
+                      handleNext();
+                    }}
+                    className="text-[#2563EB] font-bold hover:underline"
+                  >
+                    Create one free
+                  </button>
+                </p>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
