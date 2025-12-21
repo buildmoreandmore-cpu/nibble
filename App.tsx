@@ -383,13 +383,21 @@ const App: React.FC = () => {
                   </button>
                 ))}
               </div>
-              <input 
+              <input
                 type="text"
                 placeholder="Or specify exact age..."
                 className="w-full px-4 py-4 rounded-lg border-2 border-gray-100 focus:border-brand-dark outline-none transition-all font-medium"
                 value={prefs.age}
                 onChange={(e) => setPrefs({...prefs, age: e.target.value})}
               />
+              {(prefs.age === '6-9 months' || prefs.age === '9-12 months') && (
+                <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-lg mt-3">
+                  <span className="text-amber-600 text-lg">⚠️</span>
+                  <p className="text-sm text-amber-800 font-medium">
+                    For babies just starting solids, always consult your pediatrician before introducing new foods. This plan is for inspiration only.
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="space-y-4">
