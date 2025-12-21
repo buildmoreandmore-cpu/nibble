@@ -18,32 +18,22 @@ const getAI = () => {
 
 export const generateMealPlan = async (prefs: UserPreferences): Promise<FullMealPlan> => {
   const prompt = `
-    You are a supportive meal planning assistant for busy parents. Create a 30-day meal plan for a child.
+    Create a 7-day meal plan for a ${prefs.age} child.
 
     Child Details:
-    - Age: ${prefs.age}
     - Eating Style: ${prefs.eatingStyle}
-    - Favorite Foods (Sprinkle in sparingly): ${prefs.favorites}
-    - Include more of: ${prefs.wantsMoreOf}
-    - ALLERGIES (STRICT NO): ${prefs.allergies}
-    - Avoid (Hate/Gag/Not ready): ${prefs.hatesGags}
-    - Cooking Situation: ${prefs.cookingSituation}
-    - Dietary Preferences: ${prefs.dietaryPreferences}
+    - Favorites: ${prefs.favorites}
+    - ALLERGIES: ${prefs.allergies}
+    - Dislikes: ${prefs.hatesGags}
+    - Cooking: ${prefs.cookingSituation}
 
     Rules:
-    1. 30 days of Breakfast, Lunch, and Dinner (plus a snack).
-    2. NO REPEATS for main meals (Breakfast/Lunch/Dinner).
-    3. CRITICAL - Match textures to age AND eating style:
-       - 6-9 months with purees: smooth purees only
-       - 9-12 months: soft mashed foods, small soft pieces
-       - 1 year+: soft table foods, small bite-sized pieces
-       - 18 months+: regular table food textures, cut appropriately
-       - 2+ years: family-style meals with age-appropriate cuts
-       - If eating style is "table-food" or "finger-foods", DO NOT suggest purees regardless of age (exception: naturally pureed foods like mashed potatoes, hummus, yogurt)
-    4. Simple prep notes for every meal.
-    5. Weekly grocery lists for 4 weeks.
-    6. Practical batch prep tips for each week based on the cooking situation.
-    7. Tone: Warm, supportive, empathetic, and realistic.
+    1. 7 days of Breakfast, Lunch, Dinner, and Snack.
+    2. No repeated main meals.
+    3. Age-appropriate textures.
+    4. Brief prep notes (1 sentence).
+    5. One grocery list for the week.
+    6. 2-3 batch prep tips.
   `;
 
   // Always use ai.models.generateContent with model and contents as single parameter
