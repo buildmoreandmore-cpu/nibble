@@ -1,8 +1,13 @@
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
 
 export const config = {
   runtime: 'edge',
 };
+
+const redis = new Redis({
+  url: process.env.STORAGE_URL || process.env.KV_REST_API_URL || '',
+  token: process.env.STORAGE_TOKEN || process.env.KV_REST_API_TOKEN || '',
+});
 
 export default async function handler(request: Request) {
   if (request.method !== 'POST') {
@@ -21,10 +26,10 @@ export default async function handler(request: Request) {
 
     // Save email with timestamp
     const timestamp = new Date().toISOString();
-    await kv.hset('emails', { [email]: timestamp });
+    await redis.hset('emails', { [email]: timestamp });
 
     // Also add to a list for easy retrieval
-    await kv.lpush('email_list', JSON.stringify({ email, timestamp }));
+    await redis.lpush('email_list', JSON.stringify({ email, timestamp }));
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
