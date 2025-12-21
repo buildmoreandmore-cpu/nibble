@@ -393,18 +393,24 @@ const App: React.FC = () => {
 
             <div className="space-y-4">
               <label className="text-sm font-bold text-slate-400 uppercase tracking-widest">Eating Style</label>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                {(['purees', 'finger-foods', 'mixed'] as EatingStyle[]).map((style) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {([
+                  { value: 'purees', label: 'Purees / Spoon-fed', desc: 'Smooth textures, being fed' },
+                  { value: 'finger-foods', label: 'Soft Finger Foods', desc: 'Self-feeding, soft pieces' },
+                  { value: 'table-food', label: 'Table Food', desc: 'Family meals, uses fork & spoon' },
+                  { value: 'mixed', label: 'Mix of Styles', desc: 'Combination depending on meal' }
+                ] as const).map((style) => (
                   <button
-                    key={style}
-                    onClick={() => setPrefs({...prefs, eatingStyle: style})}
+                    key={style.value}
+                    onClick={() => setPrefs({...prefs, eatingStyle: style.value})}
                     className={`px-4 py-4 rounded-lg border-2 text-sm font-bold transition-all text-left ${
-                      prefs.eatingStyle === style 
-                        ? 'border-brand-dark bg-gray-50' 
+                      prefs.eatingStyle === style.value
+                        ? 'border-brand-dark bg-gray-50'
                         : 'border-gray-100 hover:border-gray-200'
                     }`}
                   >
-                    {style === 'purees' ? 'Mostly Purees' : style === 'finger-foods' ? 'Finger Foods' : 'Mix of Both'}
+                    <div>{style.label}</div>
+                    <div className="text-xs font-medium text-slate-400 mt-1">{style.desc}</div>
                   </button>
                 ))}
               </div>

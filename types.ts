@@ -1,5 +1,5 @@
 
-export type EatingStyle = 'purees' | 'finger-foods' | 'mixed';
+export type EatingStyle = 'purees' | 'finger-foods' | 'table-food' | 'mixed';
 export type CookingSituation = 'surviving' | 'batching' | 'mixed';
 
 export interface UserPreferences {
