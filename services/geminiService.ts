@@ -27,103 +27,54 @@ export const generateMealPlan = async (prefs: UserPreferences): Promise<FullMeal
     - Dislikes: ${prefs.hatesGags}
     - Cooking: ${prefs.cookingSituation}
 
+    Return ONLY valid JSON in this exact format (no markdown, no explanation):
+    {
+      "days": [
+        {
+          "day": 1,
+          "breakfast": {"title": "Meal name", "prepNotes": "Brief prep note"},
+          "lunch": {"title": "Meal name", "prepNotes": "Brief prep note"},
+          "dinner": {"title": "Meal name", "prepNotes": "Brief prep note"},
+          "snack": {"title": "Snack name", "prepNotes": "Brief prep note"}
+        }
+      ],
+      "weeks": [
+        {
+          "week": 1,
+          "groceryList": ["item1", "item2"],
+          "batchPrepTips": ["tip1", "tip2"]
+        }
+      ]
+    }
+
     Rules:
-    1. 7 days of Breakfast, Lunch, Dinner, and Snack.
+    1. 7 days total (day 1-7).
     2. No repeated main meals.
     3. Age-appropriate textures.
-    4. Brief prep notes (1 sentence).
-    5. One grocery list for the week.
-    6. 2-3 batch prep tips.
+    4. Brief prep notes.
   `;
 
-  // Always use ai.models.generateContent with model and contents as single parameter
   const response = await getAI().models.generateContent({
-    model: "gemini-1.5-flash",
-    contents: prompt,
-    config: {
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.OBJECT,
-        properties: {
-          days: {
-            type: Type.ARRAY,
-            items: {
-              type: Type.OBJECT,
-              properties: {
-                day: { type: Type.INTEGER },
-                breakfast: {
-                  type: Type.OBJECT,
-                  properties: {
-                    title: { type: Type.STRING },
-                    prepNotes: { type: Type.STRING }
-                  },
-                  required: ["title", "prepNotes"]
-                },
-                lunch: {
-                  type: Type.OBJECT,
-                  properties: {
-                    title: { type: Type.STRING },
-                    prepNotes: { type: Type.STRING }
-                  },
-                  required: ["title", "prepNotes"]
-                },
-                dinner: {
-                  type: Type.OBJECT,
-                  properties: {
-                    title: { type: Type.STRING },
-                    prepNotes: { type: Type.STRING }
-                  },
-                  required: ["title", "prepNotes"]
-                },
-                snack: {
-                  type: Type.OBJECT,
-                  properties: {
-                    title: { type: Type.STRING },
-                    prepNotes: { type: Type.STRING }
-                  },
-                  required: ["title", "prepNotes"]
-                }
-              },
-              required: ["day", "breakfast", "lunch", "dinner", "snack"]
-            }
-          },
-          weeks: {
-            type: Type.ARRAY,
-            items: {
-              type: Type.OBJECT,
-              properties: {
-                week: { type: Type.INTEGER },
-                groceryList: {
-                  type: Type.ARRAY,
-                  items: { type: Type.STRING }
-                },
-                batchPrepTips: {
-                  type: Type.ARRAY,
-                  items: { type: Type.STRING }
-                }
-              },
-              required: ["week", "groceryList", "batchPrepTips"]
-            }
-          }
-        },
-        required: ["days", "weeks"]
-      }
-    }
+    model: "gemini-2.0-flash",
+    contents: prompt
   });
 
   // Extract text using the .text property (do not use .text())
-  const jsonStr = response.text || '';
+  let jsonStr = response.text || '';
 
   if (!jsonStr || jsonStr.trim() === '') {
     throw new Error('Empty response from AI. Please try again.');
   }
+
+  // Remove markdown code blocks if present
+  jsonStr = jsonStr.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
 
   try {
     return JSON.parse(jsonStr);
   } catch (parseError) {
     console.error('JSON Parse Error. Response length:', jsonStr.length);
     console.error('Response preview:', jsonStr.substring(0, 500));
-    throw new Error('Failed to parse meal plan. The response may have been too large. Please try again.');
+    throw new Error('Failed to parse meal plan. Please try again.');
   }
 };
 
