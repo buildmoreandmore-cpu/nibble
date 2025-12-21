@@ -365,11 +365,19 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
                 </div>
 
                 <div className="space-y-6">
-                  <TodayMealCard type="Breakfast" meal={currentDay.breakfast} icon="🍳" color="bg-amber-50 text-amber-700 border-amber-100" onSwap={() => initiateSwap(currentDay.day, 'breakfast')} />
-                  <TodayMealCard type="Lunch" meal={currentDay.lunch} icon="🥪" color="bg-blue-50 text-blue-700 border-blue-100" onSwap={() => initiateSwap(currentDay.day, 'lunch')} />
-                  <TodayMealCard type="Dinner" meal={currentDay.dinner} icon="🍲" color="bg-rose-50 text-rose-700 border-rose-100" onSwap={() => initiateSwap(currentDay.day, 'dinner')} />
+                  <TodayMealCard type="Breakfast" meal={currentDay.breakfast} icon="🍳" color="bg-amber-50 text-amber-700 border-amber-100" onSwap={() => initiateSwap(currentDay.day, 'breakfast')} onEdit={() => setSelectedMealDetail({day: currentDay.day, type: 'breakfast', meal: currentDay.breakfast})} />
+                  <TodayMealCard type="Lunch" meal={currentDay.lunch} icon="🥪" color="bg-blue-50 text-blue-700 border-blue-100" onSwap={() => initiateSwap(currentDay.day, 'lunch')} onEdit={() => setSelectedMealDetail({day: currentDay.day, type: 'lunch', meal: currentDay.lunch})} />
+                  <TodayMealCard type="Dinner" meal={currentDay.dinner} icon="🍲" color="bg-rose-50 text-rose-700 border-rose-100" onSwap={() => initiateSwap(currentDay.day, 'dinner')} onEdit={() => setSelectedMealDetail({day: currentDay.day, type: 'dinner', meal: currentDay.dinner})} />
                   {showSnacks && currentDay.snack && (
-                    <TodayMealCard type="Snack" meal={currentDay.snack} icon="🍎" color="bg-emerald-50 text-emerald-700 border-emerald-100" onSwap={() => initiateSwap(currentDay.day, 'snack')} />
+                    <TodayMealCard type="Snack" meal={currentDay.snack} icon="🍎" color="bg-emerald-50 text-emerald-700 border-emerald-100" onSwap={() => initiateSwap(currentDay.day, 'snack')} onEdit={() => setSelectedMealDetail({day: currentDay.day, type: 'snack', meal: currentDay.snack!})} />
+                  )}
+                  {showSnacks && !currentDay.snack && (
+                    <button
+                      onClick={() => setAddingSnack(currentDay.day)}
+                      className="w-full py-4 border-2 border-dashed border-emerald-200 rounded-2xl text-emerald-500 font-bold hover:bg-emerald-50 hover:border-emerald-300 transition-all"
+                    >
+                      + Add Snack
+                    </button>
                   )}
                 </div>
 
@@ -665,21 +673,28 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
   );
 };
 
-const TodayMealCard: React.FC<{ type: string, meal: Meal, icon: string, color: string, onSwap: () => void }> = ({ type, meal, icon, color, onSwap }) => (
-  <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
+const TodayMealCard: React.FC<{ type: string, meal: Meal, icon: string, color: string, onSwap: () => void, onEdit: () => void }> = ({ type, meal, icon, color, onSwap, onEdit }) => (
+  <div
+    onClick={onEdit}
+    className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all group relative overflow-hidden cursor-pointer"
+  >
     <div className="flex items-start justify-between mb-4">
       <div className={`px-3 py-1.5 rounded-lg ${color} flex items-center gap-2 text-xs font-black uppercase tracking-widest`}>
         <span>{icon}</span>
         {type}
       </div>
-      <button onClick={onSwap} className="text-slate-300 hover:text-brand-dark transition-colors">
+      <button
+        onClick={(e) => { e.stopPropagation(); onSwap(); }}
+        className="text-slate-300 hover:text-brand-dark transition-colors"
+      >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
       </button>
     </div>
-    <h3 className="text-xl font-bold text-brand-dark mb-2">{meal.title}</h3>
+    <h3 className="text-xl font-bold text-brand-dark mb-2 group-hover:text-[#2563EB] transition-colors">{meal.title}</h3>
     <p className="text-sm text-slate-500 leading-relaxed font-medium italic">
       {meal.prepNotes}
     </p>
+    <p className="text-xs text-slate-400 mt-3 group-hover:text-slate-500">Click to edit</p>
   </div>
 );
 
