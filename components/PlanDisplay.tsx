@@ -90,6 +90,21 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
     setAddingSnack(null);
   };
 
+  const handleRemoveSnack = (dayNum: number, snackIndex: number) => {
+    setLocalDays(prev => prev.map(day => {
+      if (day.day === dayNum) {
+        const updatedSnacks = [...(day.snacks || [])];
+        updatedSnacks.splice(snackIndex, 1);
+        return {
+          ...day,
+          snacks: updatedSnacks
+        };
+      }
+      return day;
+    }));
+    setSelectedMealDetail(null);
+  };
+
   const suggestedSnacks = [
     { title: 'Apple Slices with Almond Butter', prepNotes: 'Slice apple and serve with a small dollop of almond butter.' },
     { title: 'Cheese Cubes', prepNotes: 'Cut cheese into small, easy-to-grab cubes.' },
@@ -650,6 +665,17 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
                     >
                       Swap
                     </button>
+                    {selectedMealDetail.type.startsWith('snack-') && (
+                      <button
+                        onClick={() => {
+                          const snackIndex = parseInt(selectedMealDetail.type.split('-')[1], 10);
+                          handleRemoveSnack(selectedMealDetail.day, snackIndex);
+                        }}
+                        className="py-3 px-4 border-2 border-red-200 text-red-500 rounded-xl font-bold hover:bg-red-50 hover:border-red-300 transition-all"
+                      >
+                        Remove
+                      </button>
+                    )}
                   </div>
                 </>
               )}
