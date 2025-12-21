@@ -41,8 +41,8 @@ export const generateMealPlan = async (prefs: UserPreferences): Promise<FullMeal
       "weeks": [
         {
           "week": 1,
-          "groceryList": ["item1", "item2"],
-          "batchPrepTips": ["tip1", "tip2"]
+          "groceryList": ["item1", "item2", "...15-20 items total"],
+          "batchPrepTips": ["tip1", "tip2", "...4-5 practical tips"]
         }
       ]
     }
@@ -52,6 +52,8 @@ export const generateMealPlan = async (prefs: UserPreferences): Promise<FullMeal
     2. No repeated main meals.
     3. Age-appropriate textures.
     4. Brief prep notes.
+    5. Grocery list should have 15-20 items covering all meals.
+    6. Include 4-5 practical batch prep tips for the week.
   `;
 
   const response = await getAI().models.generateContent({
