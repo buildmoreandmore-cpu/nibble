@@ -42,7 +42,7 @@ export const generateMealPlan = async (prefs: UserPreferences): Promise<FullMeal
 
   // Always use ai.models.generateContent with model and contents as single parameter
   const response = await getAI().models.generateContent({
-    model: "gemini-3-flash-preview",
+    model: "gemini-2.0-flash",
     contents: prompt,
     config: {
       responseMimeType: "application/json",
@@ -139,7 +139,7 @@ export const getMealAlternatives = async (
   `;
 
   const response = await getAI().models.generateContent({
-    model: "gemini-3-flash-preview",
+    model: "gemini-2.0-flash",
     contents: prompt,
     config: {
       responseMimeType: "application/json",
