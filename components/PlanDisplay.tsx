@@ -296,7 +296,9 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
               y += 10;
               doc.text('- The Yumli Team', pageWidth / 2, y, { align: 'center' });
 
-              doc.save(`yumli-30-day-meal-plan.pdf`);
+              const today = new Date();
+              const dateStr = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).replace(/,/g, '').replace(/ /g, '-');
+              doc.save(`yumli-meal-plan-${dateStr}.pdf`);
             }}
             className="flex items-center gap-2 px-4 py-2 bg-[#1A1F2B] text-white rounded-lg text-sm font-bold shadow-lg hover:brightness-110 transition-all active:scale-95"
           >
