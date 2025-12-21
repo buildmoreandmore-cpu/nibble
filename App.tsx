@@ -21,26 +21,51 @@ const AFFIRMATIONS = [
 ];
 
 const App: React.FC = () => {
+  // Load saved data from localStorage on initial render
+  const loadSavedData = () => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const saved = localStorage.getItem('nibble_session');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const savedData = loadSavedData();
+
   const [step, setStep] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingStage, setLoadingStage] = useState(0);
   const [affirmationIdx, setAffirmationIdx] = useState(0);
-  const [mealPlan, setMealPlan] = useState<FullMealPlan | null>(null);
+  const [mealPlan, setMealPlan] = useState<FullMealPlan | null>(savedData?.mealPlan || null);
   const [error, setError] = useState<string | null>(null);
-  const [email, setEmail] = useState<string>('');
-  const [emailCaptured, setEmailCaptured] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>(savedData?.email || '');
+  const [emailCaptured, setEmailCaptured] = useState<boolean>(savedData?.emailCaptured || false);
   const [emailError, setEmailError] = useState<string | null>(null);
 
-  const [prefs, setPrefs] = useState<UserPreferences>({
+  const [prefs, setPrefs] = useState<UserPreferences>(savedData?.prefs || {
     age: '',
     eatingStyle: 'mixed',
     favorites: '',
     wantsMoreOf: '',
     allergies: '',
     hatesGags: '',
-    cookingSituation: 'mixed', // Pre-selected middle option
+    cookingSituation: 'mixed',
     dietaryPreferences: ''
   });
+
+  // Save to localStorage whenever meal plan or email state changes
+  useEffect(() => {
+    if (mealPlan || emailCaptured) {
+      localStorage.setItem('nibble_session', JSON.stringify({
+        mealPlan,
+        email,
+        emailCaptured,
+        prefs
+      }));
+    }
+  }, [mealPlan, email, emailCaptured, prefs]);
 
   // Handle loading screen rotations
   useEffect(() => {
@@ -212,7 +237,12 @@ const App: React.FC = () => {
   }
 
   if (mealPlan && emailCaptured) {
-    return <PlanDisplay plan={mealPlan} userPrefs={prefs} onReset={() => { setMealPlan(null); setEmailCaptured(false); setEmail(''); }} />;
+    return <PlanDisplay plan={mealPlan} userPrefs={prefs} onReset={() => {
+      setMealPlan(null);
+      setEmailCaptured(false);
+      setEmail('');
+      localStorage.removeItem('nibble_session');
+    }} />;
   }
 
   const FormHeader = () => (
