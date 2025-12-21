@@ -116,7 +116,7 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
               const weekDays = localDays.filter(d => Math.ceil(d.day / 7) === selectedWeek);
               const weekData = plan.weeks.find(w => w.week === selectedWeek);
 
-              let content = `NIBBLE MEAL PLAN - WEEK ${selectedWeek}\n`;
+              let content = `YUMLI MEAL PLAN - WEEK ${selectedWeek}\n`;
               content += `Generated for: ${userPrefs.age} old\n`;
               content += `${'='.repeat(50)}\n\n`;
 
@@ -155,7 +155,7 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
               const url = URL.createObjectURL(blob);
               const a = document.createElement('a');
               a.href = url;
-              a.download = `nibble-week-${selectedWeek}-meal-plan.txt`;
+              a.download = `yumli-week-${selectedWeek}-meal-plan.txt`;
               a.click();
               URL.revokeObjectURL(url);
             }}

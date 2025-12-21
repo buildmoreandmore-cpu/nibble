@@ -248,8 +248,8 @@ const App: React.FC = () => {
   const FormHeader = () => (
     <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 mb-12">
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 bg-brand-dark rounded-lg flex items-center justify-center text-white font-bold italic">N</div>
-        <span className="font-display font-bold text-lg tracking-tight">Nibble</span>
+        <div className="w-8 h-8 bg-brand-dark rounded-lg flex items-center justify-center text-white font-bold italic">Y</div>
+        <span className="font-display font-bold text-lg tracking-tight">Yumli</span>
       </div>
       <div className="flex items-center gap-1">
         <div className="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
@@ -264,8 +264,8 @@ const App: React.FC = () => {
       <div className="min-h-screen bg-white">
         <nav className="flex items-center justify-between px-8 py-6 max-w-7xl mx-auto">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-brand-dark rounded-lg flex items-center justify-center text-white font-bold italic">N</div>
-            <span className="font-display font-bold text-xl">Nibble</span>
+            <div className="w-8 h-8 bg-brand-dark rounded-lg flex items-center justify-center text-white font-bold italic">Y</div>
+            <span className="font-display font-bold text-xl">Yumli</span>
           </div>
           <div className="flex items-center gap-4">
             <button 
@@ -280,12 +280,12 @@ const App: React.FC = () => {
         <main className="max-w-7xl mx-auto px-6 pt-16 pb-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="text-left">
             <h1 className="text-7xl md:text-8xl font-serif-brand leading-[0.9] text-brand-dark mb-8">
-              The modern way <br />
-              <span className="text-[#F05133] italic">to feed your family</span>
+              Meals planned, <br />
+              <span className="text-[#F05133] italic">sanity saved.</span>
             </h1>
-            
+
             <p className="text-xl text-slate-500 max-w-xl mb-10 font-medium leading-relaxed">
-              Stop googling "toddler dinner ideas" at 9 PM. We create realistic 30-day game plans customized for your child's age, likes, and your cooking capacity.
+              Stop googling "toddler dinner ideas" at 9 PM. We create realistic 30-day meal plans customized for your child's age, likes, and your cooking capacity.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
@@ -293,7 +293,7 @@ const App: React.FC = () => {
                 onClick={handleNext} 
                 className="bg-primary-yellow px-10 py-5 rounded-lg font-bold text-xl shadow-[0_4px_0_0_#D1AC00] hover:shadow-[0_2px_0_0_#D1AC00] hover:translate-y-[2px] transition-all active:translate-y-[4px] active:shadow-none"
               >
-                Try Nibble risk-free
+                Try Yumli free
               </button>
             </div>
             
