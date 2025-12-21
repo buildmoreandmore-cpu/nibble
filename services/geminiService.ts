@@ -41,9 +41,10 @@ export const generateMealPlan = async (prefs: UserPreferences): Promise<FullMeal
        - 2+ years: family-style meals with age-appropriate cuts
        - If eating style is "table-food" or "finger-foods", DO NOT suggest purees regardless of age (exception: naturally pureed foods like mashed potatoes, hummus, yogurt)
     4. Simple prep notes for every meal.
-    5. Weekly grocery lists for 4 weeks.
-    6. Practical batch prep tips for each week based on the cooking situation.
-    7. Tone: Warm, supportive, empathetic, and realistic.
+    5. Include prep time and cook time estimates for each meal (e.g., "5 mins", "10 mins", "15 mins", "20 mins", "30 mins"). Use "0 mins" for no-cook items.
+    6. Weekly grocery lists for 4 weeks.
+    7. Practical batch prep tips for each week based on the cooking situation.
+    8. Tone: Warm, supportive, empathetic, and realistic.
   `;
 
   // Always use ai.models.generateContent with model and contents as single parameter
@@ -65,33 +66,41 @@ export const generateMealPlan = async (prefs: UserPreferences): Promise<FullMeal
                   type: Type.OBJECT,
                   properties: {
                     title: { type: Type.STRING },
-                    prepNotes: { type: Type.STRING }
+                    prepNotes: { type: Type.STRING },
+                    prepTime: { type: Type.STRING },
+                    cookTime: { type: Type.STRING }
                   },
-                  required: ["title", "prepNotes"]
+                  required: ["title", "prepNotes", "prepTime", "cookTime"]
                 },
                 lunch: {
                   type: Type.OBJECT,
                   properties: {
                     title: { type: Type.STRING },
-                    prepNotes: { type: Type.STRING }
+                    prepNotes: { type: Type.STRING },
+                    prepTime: { type: Type.STRING },
+                    cookTime: { type: Type.STRING }
                   },
-                  required: ["title", "prepNotes"]
+                  required: ["title", "prepNotes", "prepTime", "cookTime"]
                 },
                 dinner: {
                   type: Type.OBJECT,
                   properties: {
                     title: { type: Type.STRING },
-                    prepNotes: { type: Type.STRING }
+                    prepNotes: { type: Type.STRING },
+                    prepTime: { type: Type.STRING },
+                    cookTime: { type: Type.STRING }
                   },
-                  required: ["title", "prepNotes"]
+                  required: ["title", "prepNotes", "prepTime", "cookTime"]
                 },
                 snack: {
                   type: Type.OBJECT,
                   properties: {
                     title: { type: Type.STRING },
-                    prepNotes: { type: Type.STRING }
+                    prepNotes: { type: Type.STRING },
+                    prepTime: { type: Type.STRING },
+                    cookTime: { type: Type.STRING }
                   },
-                  required: ["title", "prepNotes"]
+                  required: ["title", "prepNotes", "prepTime", "cookTime"]
                 }
               },
               required: ["day", "breakfast", "lunch", "dinner", "snack"]
@@ -137,10 +146,11 @@ export const getMealAlternatives = async (
     Current meal being replaced: "${currentMeal.title}".
     Eating style: ${prefs.eatingStyle}.
     Cooking situation: ${prefs.cookingSituation}.
-    
+
     CRITICAL: Avoid these existing meals to prevent repeats: ${existingTitles.slice(0, 50).join(", ")}.
-    
+
     Ensure alternatives are safe, age-appropriate, and follow dietary preferences: ${prefs.dietaryPreferences}.
+    Include prep time and cook time estimates (e.g., "5 mins", "10 mins"). Use "0 mins" for no-cook items.
     Tone: Supportive and realistic.
   `;
 
@@ -155,9 +165,11 @@ export const getMealAlternatives = async (
           type: Type.OBJECT,
           properties: {
             title: { type: Type.STRING },
-            prepNotes: { type: Type.STRING }
+            prepNotes: { type: Type.STRING },
+            prepTime: { type: Type.STRING },
+            cookTime: { type: Type.STRING }
           },
-          required: ["title", "prepNotes"]
+          required: ["title", "prepNotes", "prepTime", "cookTime"]
         }
       }
     }

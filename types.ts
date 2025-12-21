@@ -16,6 +16,8 @@ export interface UserPreferences {
 export interface Meal {
   title: string;
   prepNotes: string;
+  prepTime: string;
+  cookTime: string;
 }
 
 export interface DailyPlan {

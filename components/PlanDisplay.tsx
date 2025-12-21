@@ -10,6 +10,13 @@ interface PlanDisplayProps {
   userPrefs: UserPreferences;
 }
 
+// Helper to parse time string like "15 mins" to number
+const parseTime = (timeStr: string | undefined): number => {
+  if (!timeStr) return 0;
+  const match = timeStr.match(/(\d+)/);
+  return match ? parseInt(match[1], 10) : 0;
+};
+
 const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) => {
   const isSurviving = userPrefs.cookingSituation === 'surviving';
   const [viewMode, setViewMode] = useState<'today' | 'calendar'>(isSurviving ? 'today' : 'calendar');
@@ -30,6 +37,15 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
   const [selectedMealDetail, setSelectedMealDetail] = useState<{day: number, type: string, meal: Meal} | null>(null);
   const [editingMeal, setEditingMeal] = useState<{day: number, type: string, title: string, prepNotes: string} | null>(null);
   const [addingSnack, setAddingSnack] = useState<number | null>(null);
+  const [timeFilter, setTimeFilter] = useState<string>('all'); // 'all', '15', '30', '45'
+
+  // Filter meals by total time (prep + cook)
+  const meetsTimeFilter = (meal: Meal): boolean => {
+    if (timeFilter === 'all') return true;
+    const totalTime = parseTime(meal.prepTime) + parseTime(meal.cookTime);
+    const maxTime = parseInt(timeFilter, 10);
+    return totalTime <= maxTime;
+  };
 
   const handleSaveEdit = () => {
     if (!editingMeal) return;
@@ -222,6 +238,16 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
                     doc.text(label + ':', 25, y);
                     doc.setTextColor(60, 60, 60);
                     doc.text(meal.title, 50, y);
+                    // Add prep/cook times if available
+                    if (meal.prepTime || meal.cookTime) {
+                      const timeText = [
+                        meal.prepTime ? `Prep: ${meal.prepTime}` : '',
+                        meal.cookTime ? `Cook: ${meal.cookTime}` : ''
+                      ].filter(Boolean).join(' | ');
+                      doc.setFontSize(8);
+                      doc.setTextColor(150, 150, 150);
+                      doc.text(timeText, pageWidth - 20, y, { align: 'right' });
+                    }
                     y += 5;
                     doc.setFontSize(9);
                     doc.setTextColor(120, 120, 120);
@@ -402,8 +428,8 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
                         key={w}
                         onClick={() => setSelectedWeek(w)}
                         className={`px-6 py-2 rounded-full text-xs font-bold transition-all ${
-                          selectedWeek === w 
-                            ? 'bg-brand-dark text-white' 
+                          selectedWeek === w
+                            ? 'bg-brand-dark text-white'
                             : 'text-slate-400 hover:text-slate-600 hover:bg-gray-50'
                         }`}
                       >
@@ -411,7 +437,22 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
                       </button>
                     ))}
                   </div>
-                  <h2 className="text-2xl font-serif-brand">Week {selectedWeek} Schedule</h2>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-slate-400">Filter by time:</span>
+                      <select
+                        value={timeFilter}
+                        onChange={(e) => setTimeFilter(e.target.value)}
+                        className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-slate-600 bg-white focus:outline-none focus:border-brand-dark"
+                      >
+                        <option value="all">All meals</option>
+                        <option value="15">15 mins or less</option>
+                        <option value="30">30 mins or less</option>
+                        <option value="45">45 mins or less</option>
+                      </select>
+                    </div>
+                    <h2 className="text-2xl font-serif-brand">Week {selectedWeek}</h2>
+                  </div>
                 </div>
 
                 <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4 transition-opacity duration-300 ${isShuffling ? 'opacity-40' : 'opacity-100'}`}>
@@ -427,9 +468,9 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
                       </div>
                       
                       <div className="space-y-4">
-                        <CalendarMeal type="B" meal={day.breakfast} color="text-amber-600" onClick={() => setSelectedMealDetail({day: day.day, type: 'breakfast', meal: day.breakfast})} />
-                        <CalendarMeal type="L" meal={day.lunch} color="text-blue-600" onClick={() => setSelectedMealDetail({day: day.day, type: 'lunch', meal: day.lunch})} />
-                        <CalendarMeal type="D" meal={day.dinner} color="text-rose-600" onClick={() => setSelectedMealDetail({day: day.day, type: 'dinner', meal: day.dinner})} />
+                        <CalendarMeal type="B" meal={day.breakfast} color="text-amber-600" dimmed={!meetsTimeFilter(day.breakfast)} onClick={() => setSelectedMealDetail({day: day.day, type: 'breakfast', meal: day.breakfast})} />
+                        <CalendarMeal type="L" meal={day.lunch} color="text-blue-600" dimmed={!meetsTimeFilter(day.lunch)} onClick={() => setSelectedMealDetail({day: day.day, type: 'lunch', meal: day.lunch})} />
+                        <CalendarMeal type="D" meal={day.dinner} color="text-rose-600" dimmed={!meetsTimeFilter(day.dinner)} onClick={() => setSelectedMealDetail({day: day.day, type: 'dinner', meal: day.dinner})} />
                         {showSnacks && (
                           <div className="pt-2 border-t border-dashed border-gray-100">
                             {day.snack ? (
@@ -542,6 +583,29 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
                 </div>
               ) : (
                 <>
+                  {(selectedMealDetail.meal.prepTime || selectedMealDetail.meal.cookTime) && (
+                    <div className="flex gap-4 mb-4 p-3 bg-gray-50 rounded-xl">
+                      {selectedMealDetail.meal.prepTime && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">🔪</span>
+                          <div>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase">Prep</p>
+                            <p className="text-sm font-bold text-slate-700">{selectedMealDetail.meal.prepTime}</p>
+                          </div>
+                        </div>
+                      )}
+                      {selectedMealDetail.meal.cookTime && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">🍳</span>
+                          <div>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase">Cook</p>
+                            <p className="text-sm font-bold text-slate-700">{selectedMealDetail.meal.cookTime}</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   <div className="mb-6">
                     <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Prep Notes</h4>
                     <p className="text-slate-600 leading-relaxed">{selectedMealDetail.meal.prepNotes}</p>
@@ -693,6 +757,12 @@ const TodayMealCard: React.FC<{ type: string, meal: Meal, icon: string, color: s
       </button>
     </div>
     <h3 className="text-xl font-bold text-brand-dark mb-2 group-hover:text-[#2563EB] transition-colors">{meal.title}</h3>
+    {(meal.prepTime || meal.cookTime) && (
+      <div className="flex gap-3 mb-2 text-xs font-medium">
+        {meal.prepTime && <span className="text-slate-400">Prep: {meal.prepTime}</span>}
+        {meal.cookTime && <span className="text-slate-400">Cook: {meal.cookTime}</span>}
+      </div>
+    )}
     <p className="text-sm text-slate-500 leading-relaxed font-medium italic">
       {meal.prepNotes}
     </p>
@@ -700,11 +770,16 @@ const TodayMealCard: React.FC<{ type: string, meal: Meal, icon: string, color: s
   </div>
 );
 
-const CalendarMeal: React.FC<{ type: string, meal: Meal, color: string, onClick: () => void }> = ({ type, meal, color, onClick }) => (
-  <div onClick={onClick} className="cursor-pointer group">
+const CalendarMeal: React.FC<{ type: string, meal: Meal, color: string, onClick: () => void, dimmed?: boolean }> = ({ type, meal, color, onClick, dimmed }) => (
+  <div onClick={onClick} className={`cursor-pointer group transition-opacity ${dimmed ? 'opacity-30' : ''}`}>
     <div className="flex items-center gap-2 mb-1">
       <span className={`text-[10px] font-black w-4 flex-shrink-0 ${color}`}>{type}</span>
       <h4 className="text-[11px] font-bold text-slate-800 group-hover:text-[#2563EB] truncate transition-colors">{meal.title}</h4>
+      {(meal.prepTime || meal.cookTime) && (
+        <span className="text-[8px] text-slate-300 ml-auto whitespace-nowrap">
+          {parseTime(meal.prepTime) + parseTime(meal.cookTime)}m
+        </span>
+      )}
     </div>
     {/* Prep notes only shown briefly/truncated in calendar to reduce density */}
     <p className="text-[9px] text-slate-400 pl-6 leading-tight truncate group-hover:text-slate-600">
