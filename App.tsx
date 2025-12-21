@@ -373,9 +373,9 @@ const App: React.FC = () => {
                     key={age}
                     onClick={() => setPrefs({...prefs, age})}
                     className={`px-5 py-2.5 rounded-full border-2 text-sm font-bold transition-all ${
-                      prefs.age === age 
-                        ? 'border-brand-dark bg-brand-dark text-white' 
-                        : 'border-gray-100 hover:border-gray-300'
+                      prefs.age === age
+                        ? 'border-[#1A1F2B] bg-[#1A1F2B] !text-white'
+                        : 'border-gray-100 text-brand-dark hover:border-gray-300'
                     }`}
                   >
                     {age}
