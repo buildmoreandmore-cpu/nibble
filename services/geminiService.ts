@@ -132,7 +132,18 @@ export const generateMealPlan = async (prefs: UserPreferences): Promise<FullMeal
 
   // Extract text using the .text property (do not use .text())
   const jsonStr = response.text || '';
-  return JSON.parse(jsonStr);
+
+  if (!jsonStr || jsonStr.trim() === '') {
+    throw new Error('Empty response from AI. Please try again.');
+  }
+
+  try {
+    return JSON.parse(jsonStr);
+  } catch (parseError) {
+    console.error('JSON Parse Error. Response length:', jsonStr.length);
+    console.error('Response preview:', jsonStr.substring(0, 500));
+    throw new Error('Failed to parse meal plan. The response may have been too large. Please try again.');
+  }
 };
 
 export const getMealAlternatives = async (
