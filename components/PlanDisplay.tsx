@@ -385,7 +385,7 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
                 <div className="flex items-center justify-between mb-8">
                   <div>
                     <h1 className="text-4xl font-serif-brand text-brand-dark">Today's Focus</h1>
-                    <p className="text-slate-500 font-medium">Day {currentDay.day} of 30</p>
+                    <p className="text-slate-500 font-medium">Day {currentDay.day} of {localDays.length}</p>
                   </div>
                   <div className="flex gap-2">
                     <button 

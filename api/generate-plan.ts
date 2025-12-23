@@ -22,8 +22,9 @@ export default async function handler(request: Request) {
 
     const ai = new GoogleGenAI({ apiKey });
 
+    // Generate a 7-day meal template plus 4 weeks of grocery lists
     const prompt = `
-      Create a 7-day meal plan for a ${prefs.age} child.
+      Create a 7-day meal plan template for a ${prefs.age} child, plus grocery lists and prep tips for 4 weeks.
 
       Child Details:
       - Eating Style: ${prefs.eatingStyle}
@@ -33,12 +34,12 @@ export default async function handler(request: Request) {
       - Cooking: ${prefs.cookingSituation}
 
       Rules:
-      1. 7 days total (day 1-7).
-      2. No repeated main meals.
+      1. Create 7 unique days of meals (these will be rotated across 4 weeks).
+      2. No repeated main meals within the 7 days.
       3. Age-appropriate textures.
-      4. Brief prep notes.
-      5. Grocery list should have 15-20 items covering all meals.
-      6. Include 4-5 practical batch prep tips for the week.
+      4. Brief prep notes for each meal.
+      5. Create 4 weeks of grocery lists (15-20 items each) - vary items slightly each week.
+      6. Include 4-5 practical batch prep tips for each of the 4 weeks.
     `;
 
     const mealSchema = {
@@ -109,9 +110,45 @@ export default async function handler(request: Request) {
       });
     }
 
-    const mealPlan = JSON.parse(jsonStr);
+    const basePlan = JSON.parse(jsonStr);
 
-    return new Response(JSON.stringify(mealPlan), {
+    // Expand 7-day template to full 28 days (4 weeks)
+    const expandedDays = [];
+    for (let week = 0; week < 4; week++) {
+      for (let i = 0; i < 7; i++) {
+        const templateDay = basePlan.days[i % basePlan.days.length];
+        expandedDays.push({
+          ...templateDay,
+          day: week * 7 + i + 1,
+          // Deep clone meals to avoid reference issues
+          breakfast: { ...templateDay.breakfast },
+          lunch: { ...templateDay.lunch },
+          dinner: { ...templateDay.dinner },
+          snack: { ...templateDay.snack }
+        });
+      }
+    }
+
+    // Ensure we have 4 weeks of grocery/prep data
+    const weeks = basePlan.weeks || [];
+    while (weeks.length < 4) {
+      const templateWeek = weeks[weeks.length - 1] || weeks[0] || {
+        groceryList: [],
+        batchPrepTips: []
+      };
+      weeks.push({
+        week: weeks.length + 1,
+        groceryList: [...templateWeek.groceryList],
+        batchPrepTips: [...templateWeek.batchPrepTips]
+      });
+    }
+
+    const fullPlan = {
+      days: expandedDays,
+      weeks: weeks.slice(0, 4).map((w: any, idx: number) => ({ ...w, week: idx + 1 }))
+    };
+
+    return new Response(JSON.stringify(fullPlan), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
