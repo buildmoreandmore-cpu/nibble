@@ -27,26 +27,6 @@ export const generateMealPlan = async (prefs: UserPreferences): Promise<FullMeal
     - Dislikes: ${prefs.hatesGags}
     - Cooking: ${prefs.cookingSituation}
 
-    Return ONLY valid JSON in this exact format (no markdown, no explanation):
-    {
-      "days": [
-        {
-          "day": 1,
-          "breakfast": {"title": "Meal name", "prepNotes": "Brief prep note"},
-          "lunch": {"title": "Meal name", "prepNotes": "Brief prep note"},
-          "dinner": {"title": "Meal name", "prepNotes": "Brief prep note"},
-          "snack": {"title": "Snack name", "prepNotes": "Brief prep note"}
-        }
-      ],
-      "weeks": [
-        {
-          "week": 1,
-          "groceryList": ["item1", "item2", "...15-20 items total"],
-          "batchPrepTips": ["tip1", "tip2", "...4-5 practical tips"]
-        }
-      ]
-    }
-
     Rules:
     1. 7 days total (day 1-7).
     2. No repeated main meals.
@@ -56,28 +36,73 @@ export const generateMealPlan = async (prefs: UserPreferences): Promise<FullMeal
     6. Include 4-5 practical batch prep tips for the week.
   `;
 
+  // Define schema for structured output to guarantee valid JSON
+  const mealSchema = {
+    type: Type.OBJECT,
+    properties: {
+      title: { type: Type.STRING },
+      prepNotes: { type: Type.STRING }
+    },
+    required: ["title", "prepNotes"]
+  };
+
+  const daySchema = {
+    type: Type.OBJECT,
+    properties: {
+      day: { type: Type.NUMBER },
+      breakfast: mealSchema,
+      lunch: mealSchema,
+      dinner: mealSchema,
+      snack: mealSchema
+    },
+    required: ["day", "breakfast", "lunch", "dinner", "snack"]
+  };
+
+  const weekSchema = {
+    type: Type.OBJECT,
+    properties: {
+      week: { type: Type.NUMBER },
+      groceryList: {
+        type: Type.ARRAY,
+        items: { type: Type.STRING }
+      },
+      batchPrepTips: {
+        type: Type.ARRAY,
+        items: { type: Type.STRING }
+      }
+    },
+    required: ["week", "groceryList", "batchPrepTips"]
+  };
+
   const response = await getAI().models.generateContent({
     model: "gemini-2.0-flash",
-    contents: prompt
+    contents: prompt,
+    config: {
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.OBJECT,
+        properties: {
+          days: {
+            type: Type.ARRAY,
+            items: daySchema
+          },
+          weeks: {
+            type: Type.ARRAY,
+            items: weekSchema
+          }
+        },
+        required: ["days", "weeks"]
+      }
+    }
   });
 
-  // Extract text using the .text property (do not use .text())
-  let jsonStr = response.text || '';
+  const jsonStr = response.text || '';
 
   if (!jsonStr || jsonStr.trim() === '') {
     throw new Error('Empty response from AI. Please try again.');
   }
 
-  // Remove markdown code blocks if present
-  jsonStr = jsonStr.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-
-  try {
-    return JSON.parse(jsonStr);
-  } catch (parseError) {
-    console.error('JSON Parse Error. Response length:', jsonStr.length);
-    console.error('Response preview:', jsonStr.substring(0, 500));
-    throw new Error('Failed to parse meal plan. Please try again.');
-  }
+  return JSON.parse(jsonStr);
 };
 
 export const getMealAlternatives = async (
