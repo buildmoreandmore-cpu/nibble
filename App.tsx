@@ -291,16 +291,16 @@ const App: React.FC = () => {
   }
 
   const FormHeader = () => (
-    <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 mb-12">
+    <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-100 mb-6 sm:mb-12">
       <div
         onClick={() => setStep(0)}
-        className="flex items-center gap-3 cursor-pointer hover:opacity-70 transition-opacity"
+        className="flex items-center gap-2 sm:gap-3 cursor-pointer hover:opacity-70 transition-opacity"
       >
-        <img src="/logo.png" alt="3meals" className="w-8 h-8 object-contain" />
-        <span className="font-display font-bold text-lg tracking-tight">3meals</span>
+        <img src="/logo.png" alt="3meals" className="w-7 h-7 sm:w-8 sm:h-8 object-contain" />
+        <span className="font-display font-bold text-base sm:text-lg tracking-tight">3meals</span>
       </div>
       <div className="flex items-center gap-1">
-        <div className="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+        <div className="w-12 sm:w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
           <div className="h-full bg-slate-400 transition-all duration-500" style={{ width: `${(step / 4) * 100}%` }}></div>
         </div>
       </div>
@@ -310,59 +310,59 @@ const App: React.FC = () => {
   if (step === 0) {
     return (
       <div className="min-h-screen bg-white relative overflow-hidden">
-        {/* Background logo watermark */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.08] pointer-events-none">
-          <img src="/logo.png" alt="" className="w-[900px] h-[900px] object-contain" />
+        {/* Background logo watermark - large "3" */}
+        <div className="absolute top-1/2 right-0 lg:right-[10%] -translate-y-1/2 opacity-[0.12] pointer-events-none">
+          <img src="/logo.png" alt="" className="w-[400px] h-[400px] sm:w-[500px] sm:h-[500px] md:w-[700px] md:h-[700px] lg:w-[900px] lg:h-[900px] object-contain" />
         </div>
 
-        <nav className="flex items-center justify-between px-8 py-6 max-w-7xl mx-auto relative z-10">
+        <nav className="flex items-center justify-between px-4 sm:px-8 py-4 sm:py-6 max-w-7xl mx-auto relative z-10">
           <div className="flex items-center gap-2">
             <img src="/logo.png" alt="3meals" className="w-8 h-8 object-contain" />
-            <span className="font-display font-bold text-xl">3meals</span>
+            <span className="font-display font-bold text-lg sm:text-xl">3meals</span>
           </div>
           <div className="flex items-center gap-4">
-            <button 
-              onClick={handleNext} 
-              className="px-6 py-2.5 rounded-full font-bold text-sm border-2 border-brand-dark hover:bg-brand-dark hover:text-white transition-all"
+            <button
+              onClick={handleNext}
+              className="px-4 sm:px-6 py-2 sm:py-2.5 rounded-full font-bold text-sm border-2 border-brand-dark hover:bg-brand-dark hover:text-white transition-all"
             >
               Get Started
             </button>
           </div>
         </nav>
 
-        <main className="max-w-7xl mx-auto px-6 pt-16 pb-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 sm:pt-16 pb-16 sm:pb-24 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center relative z-10">
           <div className="text-left">
-            <h1 className="text-7xl md:text-8xl font-serif-brand leading-[0.9] text-brand-dark mb-8">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-serif-brand leading-[0.95] text-brand-dark mb-6 sm:mb-8">
               Meals planned, <br />
               <span className="text-[#F05133] italic">sanity saved.</span>
             </h1>
 
-            <p className="text-xl text-slate-500 max-w-xl mb-10 font-medium leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-slate-500 max-w-xl mb-8 sm:mb-10 font-medium leading-relaxed">
               Stop googling "toddler dinner ideas" at 9 PM. We create realistic 30-day meal plans customized for your child's age, likes, and your cooking capacity.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <button
                 onClick={handleNext}
-                className="bg-primary-yellow px-10 py-5 rounded-lg font-bold text-xl shadow-[0_4px_0_0_#D1AC00] hover:shadow-[0_2px_0_0_#D1AC00] hover:translate-y-[2px] transition-all active:translate-y-[4px] active:shadow-none"
+                className="bg-primary-yellow px-6 sm:px-10 py-4 sm:py-5 rounded-lg font-bold text-lg sm:text-xl shadow-[0_4px_0_0_#D1AC00] hover:shadow-[0_2px_0_0_#D1AC00] hover:translate-y-[2px] transition-all active:translate-y-[4px] active:shadow-none"
               >
                 Try 3meals free
               </button>
               <button
                 onClick={() => setShowReturningUserModal(true)}
-                className="px-8 py-5 rounded-lg font-bold text-lg border-2 border-gray-200 text-slate-600 hover:border-gray-300 hover:bg-gray-50 transition-all"
+                className="px-6 sm:px-8 py-4 sm:py-5 rounded-lg font-bold text-base sm:text-lg border-2 border-gray-200 text-slate-600 hover:border-gray-300 hover:bg-gray-50 transition-all"
               >
                 I already have a plan
               </button>
             </div>
 
-            <p className="mt-8 text-slate-400 font-medium flex items-center gap-2">
-              <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"/></svg>
-              No-typing setup • Age-appropriate textures • Grocery lists
+            <p className="mt-6 sm:mt-8 text-slate-400 font-medium flex flex-wrap items-center gap-2 text-sm sm:text-base">
+              <svg className="w-5 h-5 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"/></svg>
+              <span>No-typing setup • Age-appropriate textures • Grocery lists</span>
             </p>
           </div>
 
-          <div className="relative group">
+          <div className="relative group hidden md:block">
             <div className="absolute -inset-4 bg-primary-yellow/10 rounded-3xl blur-2xl group-hover:bg-primary-yellow/20 transition-all"></div>
             <div className="relative bg-white border border-gray-100 rounded-2xl shadow-2xl overflow-hidden rotate-2 hover:rotate-0 transition-transform duration-500">
               <div className="bg-gray-50 border-b border-gray-100 p-4 flex items-center justify-between">
@@ -484,16 +484,16 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <FormHeader />
-      
-      <div className="flex-1 max-w-2xl mx-auto w-full px-6 pb-20">
-        <div className="flex items-center gap-4 mb-8">
-          <button 
-            onClick={handlePrev} 
-            className="w-10 h-10 border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors"
+
+      <div className="flex-1 max-w-2xl mx-auto w-full px-4 sm:px-6 pb-12 sm:pb-20">
+        <div className="flex items-start gap-3 sm:gap-4 mb-6 sm:mb-8">
+          <button
+            onClick={handlePrev}
+            className="w-9 h-9 sm:w-10 sm:h-10 border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors flex-shrink-0 mt-1"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"/></svg>
+            <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"/></svg>
           </button>
-          <h2 className="text-4xl font-serif-brand text-brand-dark">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif-brand text-brand-dark">
             {step === 1 && "Tell us about your little human"}
             {step === 2 && "What's working right now?"}
             {step === 3 && "What's off the table?"}
