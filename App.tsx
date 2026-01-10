@@ -310,9 +310,9 @@ const App: React.FC = () => {
   if (step === 0) {
     return (
       <div className="min-h-screen bg-white relative overflow-hidden">
-        {/* Background logo watermark - large "3" */}
-        <div className="absolute top-1/2 right-0 lg:right-[10%] -translate-y-1/2 opacity-[0.12] pointer-events-none">
-          <img src="/logo.png" alt="" className="w-[400px] h-[400px] sm:w-[500px] sm:h-[500px] md:w-[700px] md:h-[700px] lg:w-[900px] lg:h-[900px] object-contain" />
+        {/* Background logo - large "3" */}
+        <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none">
+          <img src="/logo.png" alt="" className="w-[80vw] max-w-[700px] h-auto opacity-[0.20] object-contain" />
         </div>
 
         <nav className="flex items-center justify-between px-4 sm:px-8 py-4 sm:py-6 max-w-7xl mx-auto relative z-10">
