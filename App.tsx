@@ -25,7 +25,7 @@ const App: React.FC = () => {
   const loadSavedData = () => {
     if (typeof window === 'undefined') return null;
     try {
-      const saved = localStorage.getItem('nibble_session');
+      const saved = localStorage.getItem('3meals_session');
       return saved ? JSON.parse(saved) : null;
     } catch {
       return null;
@@ -60,7 +60,7 @@ const App: React.FC = () => {
   // Save to localStorage whenever meal plan or email state changes
   useEffect(() => {
     if (mealPlan || emailCaptured) {
-      localStorage.setItem('nibble_session', JSON.stringify({
+      localStorage.setItem('3meals_session', JSON.stringify({
         mealPlan,
         email,
         emailCaptured,
@@ -202,7 +202,9 @@ const App: React.FC = () => {
         <div className="relative w-32 h-32 mb-12">
           <div className="absolute inset-0 border-[4px] border-slate-50 rounded-full"></div>
           <div className="absolute inset-0 border-[4px] border-[#FFD200] rounded-full border-t-transparent animate-spin"></div>
-          <div className="absolute inset-0 flex items-center justify-center text-4xl">🍳</div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <img src="/logo.png" alt="3meals" className="w-16 h-16 object-contain" />
+          </div>
         </div>
         
         <div className="text-center max-w-md animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -284,7 +286,7 @@ const App: React.FC = () => {
       setMealPlan(null);
       setEmailCaptured(false);
       setEmail('');
-      localStorage.removeItem('nibble_session');
+      localStorage.removeItem('3meals_session');
     }} />;
   }
 
@@ -294,8 +296,8 @@ const App: React.FC = () => {
         onClick={() => setStep(0)}
         className="flex items-center gap-3 cursor-pointer hover:opacity-70 transition-opacity"
       >
-        <div className="w-8 h-8 bg-brand-dark rounded-lg flex items-center justify-center text-white font-bold italic">Y</div>
-        <span className="font-display font-bold text-lg tracking-tight">Yumli</span>
+        <img src="/logo.png" alt="3meals" className="w-8 h-8 object-contain" />
+        <span className="font-display font-bold text-lg tracking-tight">3meals</span>
       </div>
       <div className="flex items-center gap-1">
         <div className="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
@@ -307,11 +309,16 @@ const App: React.FC = () => {
 
   if (step === 0) {
     return (
-      <div className="min-h-screen bg-white">
-        <nav className="flex items-center justify-between px-8 py-6 max-w-7xl mx-auto">
+      <div className="min-h-screen bg-white relative overflow-hidden">
+        {/* Background logo watermark */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none">
+          <img src="/logo.png" alt="" className="w-[800px] h-[800px] object-contain" />
+        </div>
+
+        <nav className="flex items-center justify-between px-8 py-6 max-w-7xl mx-auto relative z-10">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-brand-dark rounded-lg flex items-center justify-center text-white font-bold italic">Y</div>
-            <span className="font-display font-bold text-xl">Yumli</span>
+            <img src="/logo.png" alt="3meals" className="w-8 h-8 object-contain" />
+            <span className="font-display font-bold text-xl">3meals</span>
           </div>
           <div className="flex items-center gap-4">
             <button 
@@ -323,7 +330,7 @@ const App: React.FC = () => {
           </div>
         </nav>
 
-        <main className="max-w-7xl mx-auto px-6 pt-16 pb-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <main className="max-w-7xl mx-auto px-6 pt-16 pb-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
           <div className="text-left">
             <h1 className="text-7xl md:text-8xl font-serif-brand leading-[0.9] text-brand-dark mb-8">
               Meals planned, <br />
@@ -339,7 +346,7 @@ const App: React.FC = () => {
                 onClick={handleNext}
                 className="bg-primary-yellow px-10 py-5 rounded-lg font-bold text-xl shadow-[0_4px_0_0_#D1AC00] hover:shadow-[0_2px_0_0_#D1AC00] hover:translate-y-[2px] transition-all active:translate-y-[4px] active:shadow-none"
               >
-                Try Yumli free
+                Try 3meals free
               </button>
               <button
                 onClick={() => setShowReturningUserModal(true)}
