@@ -365,8 +365,71 @@ const App: React.FC = () => {
               <svg className="w-5 h-5 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"/></svg>
               <span>No-typing setup • Age-appropriate textures • Grocery lists</span>
             </p>
+
+            {/* Mobile Preview Card */}
+            <div className="mt-10 md:hidden">
+              <div className="bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden">
+                <div className="bg-gray-50 border-b border-gray-100 px-4 py-3 flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-500">Your Week 1 Preview</span>
+                  <div className="flex gap-1">
+                    <div className="w-2 h-2 rounded-full bg-amber-400"></div>
+                    <div className="w-2 h-2 rounded-full bg-blue-400"></div>
+                    <div className="w-2 h-2 rounded-full bg-rose-400"></div>
+                  </div>
+                </div>
+                {/* Horizontal scrolling days */}
+                <div className="overflow-x-auto scrollbar-hide">
+                  <div className="flex gap-3 p-4 min-w-max">
+                    {[
+                      { day: 'Mon', meals: ['Banana Pancakes', 'Avocado Toast', 'Sweet Potato Pasta'] },
+                      { day: 'Tue', meals: ['Greek Yogurt', 'Cheesy Eggs', 'Turkey Chili'] },
+                      { day: 'Wed', meals: ['Apple Porridge', 'Turkey Wraps', 'Salmon Cakes'] },
+                      { day: 'Thu', meals: ['Oat Waffles', 'Veggie Quesadilla', 'Chicken Stir Fry'] },
+                    ].map((d, i) => (
+                      <div key={i} className="w-32 flex-shrink-0 bg-gray-50 rounded-xl p-3 border border-gray-100">
+                        <p className="text-xs font-bold text-slate-400 mb-2">{d.day}</p>
+                        <div className="space-y-1.5">
+                          <p className="text-[10px] text-amber-700 bg-amber-50 px-2 py-1 rounded truncate">{d.meals[0]}</p>
+                          <p className="text-[10px] text-blue-700 bg-blue-50 px-2 py-1 rounded truncate">{d.meals[1]}</p>
+                          <p className="text-[10px] text-rose-700 bg-rose-50 px-2 py-1 rounded truncate">{d.meals[2]}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {/* Grocery preview */}
+                <div className="bg-brand-dark px-4 py-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base">🛒</span>
+                    <span className="text-xs font-bold text-white">Grocery list included</span>
+                  </div>
+                  <span className="text-[10px] text-emerald-400 font-bold">Auto-generated</span>
+                </div>
+              </div>
+            </div>
+
+            {/* How It Works - Mobile */}
+            <div className="mt-12 md:hidden">
+              <h3 className="text-xl font-serif-brand text-brand-dark mb-6">How it works</h3>
+              <div className="space-y-4">
+                {[
+                  { num: '1', title: 'Tell us about your child', desc: 'Age, favorites, allergies — takes 2 minutes' },
+                  { num: '2', title: 'Get your 30-day plan', desc: 'AI creates meals tailored to your family' },
+                  { num: '3', title: 'Shop & cook stress-free', desc: 'Weekly grocery lists + batch prep tips' },
+                ].map((step, i) => (
+                  <div key={i} className="flex gap-4 items-start">
+                    <div className="w-8 h-8 rounded-full bg-primary-yellow flex items-center justify-center font-bold text-brand-dark flex-shrink-0">{step.num}</div>
+                    <div>
+                      <p className="font-bold text-brand-dark">{step.title}</p>
+                      <p className="text-sm text-slate-500">{step.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
+          {/* Desktop Preview Card */}
           <div className="relative group hidden md:block">
             <div className="absolute -inset-4 bg-primary-yellow/10 rounded-3xl blur-2xl group-hover:bg-primary-yellow/20 transition-all"></div>
             <div className="relative bg-white border border-gray-100 rounded-2xl shadow-2xl overflow-hidden rotate-2 hover:rotate-0 transition-transform duration-500">
