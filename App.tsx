@@ -315,9 +315,9 @@ const App: React.FC = () => {
         <div className="hidden md:block absolute top-1/2 left-[5%] -translate-y-1/2 pointer-events-none">
           <img src="/logo.png" alt="" className="w-[500px] lg:w-[600px] h-auto opacity-[0.15] object-contain" />
         </div>
-        {/* Mobile version - top right white space */}
-        <div className="md:hidden absolute top-20 right-4 pointer-events-none">
-          <img src="/logo.png" alt="" className="w-[120px] h-auto opacity-[0.25] object-contain" />
+        {/* Mobile version - larger logo on right side */}
+        <div className="md:hidden absolute top-24 -right-8 pointer-events-none">
+          <img src="/logo.png" alt="" className="w-[200px] h-auto opacity-[0.20] object-contain" />
         </div>
 
         <nav className="flex items-center justify-between px-4 sm:px-8 py-4 sm:py-6 max-w-7xl mx-auto relative z-10">
