@@ -155,30 +155,31 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
   return (
     <div className="min-h-screen bg-white flex flex-col">
       {/* Top Navbar */}
-      <div className="flex items-center justify-between px-6 py-3 border-b border-gray-100 bg-white sticky top-0 z-10">
-        <div className="flex items-center gap-4">
-          <button onClick={onReset} className="text-slate-500 text-sm font-bold hover:text-brand-dark flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-all">
+      <div className="flex items-center justify-between px-3 sm:px-6 py-2 sm:py-3 border-b border-gray-100 bg-white sticky top-0 z-10">
+        <div className="flex items-center gap-2 sm:gap-4">
+          <button onClick={onReset} className="text-slate-500 text-xs sm:text-sm font-bold hover:text-brand-dark flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-all">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"/></svg>
-            Exit Plan
+            <span className="hidden sm:inline">Exit Plan</span>
           </button>
-          <div className="h-6 w-px bg-gray-100"></div>
+          <div className="h-6 w-px bg-gray-100 hidden sm:block"></div>
           <div className="flex bg-gray-100 p-1 rounded-lg">
-            <button 
+            <button
               onClick={() => setViewMode('today')}
-              className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all ${viewMode === 'today' ? 'bg-white shadow-sm text-brand-dark' : 'text-slate-500 hover:text-slate-700'}`}
+              className={`px-3 sm:px-4 py-1.5 text-xs font-bold rounded-md transition-all ${viewMode === 'today' ? 'bg-white shadow-sm text-brand-dark' : 'text-slate-500 hover:text-slate-700'}`}
             >
               Today
             </button>
-            <button 
+            <button
               onClick={() => setViewMode('calendar')}
-              className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all ${viewMode === 'calendar' ? 'bg-white shadow-sm text-brand-dark' : 'text-slate-500 hover:text-slate-700'}`}
+              className={`px-3 sm:px-4 py-1.5 text-xs font-bold rounded-md transition-all ${viewMode === 'calendar' ? 'bg-white shadow-sm text-brand-dark' : 'text-slate-500 hover:text-slate-700'}`}
             >
-              Weekly View
+              <span className="hidden sm:inline">Weekly View</span>
+              <span className="sm:hidden">Week</span>
             </button>
           </div>
         </div>
-        
-        <div className="flex items-center gap-4">
+
+        <div className="flex items-center gap-2 sm:gap-4">
           <button
             onClick={() => {
               const doc = new jsPDF();
@@ -339,16 +340,17 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
               const dateStr = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).replace(/,/g, '').replace(/ /g, '-');
               doc.save(`3meals-plan-${dateStr}.pdf`);
             }}
-            className="flex items-center gap-2 px-4 py-2 bg-[#1A1F2B] text-white rounded-lg text-sm font-bold shadow-lg hover:brightness-110 transition-all active:scale-95"
+            className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 bg-[#1A1F2B] text-white rounded-lg text-xs sm:text-sm font-bold shadow-lg hover:brightness-110 transition-all active:scale-95"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-            Download Full Plan
+            <span className="hidden sm:inline">Download Full Plan</span>
+            <span className="sm:hidden">PDF</span>
           </button>
         </div>
       </div>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Left Sidebar */}
+        {/* Left Sidebar - hidden on mobile */}
         <div className="w-72 border-r border-gray-100 bg-white overflow-y-auto flex flex-col p-6 gap-8 hidden lg:flex">
           <div className="space-y-4">
             <div className="w-16 h-16 bg-[#FFF9E6] rounded-2xl flex items-center justify-center text-3xl shadow-inner border border-[#FFE7A3]">👶</div>
@@ -376,28 +378,28 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1 bg-white overflow-y-auto p-4 md:p-8">
+        <div className="flex-1 bg-white overflow-y-auto p-3 sm:p-4 md:p-8">
           <div className="max-w-6xl mx-auto">
-            
+
             {viewMode === 'today' ? (
               /* Today's Focused View */
-              <div className="max-w-xl mx-auto py-8">
-                <div className="flex items-center justify-between mb-8">
+              <div className="max-w-xl mx-auto py-4 sm:py-8">
+                <div className="flex items-center justify-between mb-6 sm:mb-8">
                   <div>
-                    <h1 className="text-4xl font-serif-brand text-brand-dark">Today's Focus</h1>
-                    <p className="text-slate-500 font-medium">Day {currentDay.day} of 30</p>
+                    <h1 className="text-2xl sm:text-4xl font-serif-brand text-brand-dark">Today's Focus</h1>
+                    <p className="text-slate-500 font-medium text-sm sm:text-base">Day {currentDay.day} of 30</p>
                   </div>
                   <div className="flex gap-2">
-                    <button 
+                    <button
                       onClick={() => setCurrentDayIndex(i => Math.max(0, i - 1))}
-                      className="w-10 h-10 border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 disabled:opacity-30"
+                      className="w-9 h-9 sm:w-10 sm:h-10 border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 disabled:opacity-30"
                       disabled={currentDayIndex === 0}
                     >
                       ←
                     </button>
-                    <button 
+                    <button
                       onClick={() => setCurrentDayIndex(i => Math.min(localDays.length - 1, i + 1))}
-                      className="w-10 h-10 border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 disabled:opacity-30"
+                      className="w-9 h-9 sm:w-10 sm:h-10 border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 disabled:opacity-30"
                       disabled={currentDayIndex === localDays.length - 1}
                     >
                       →
@@ -405,7 +407,7 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
                   </div>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   <TodayMealCard type="Breakfast" meal={currentDay.breakfast} icon="🍳" color="bg-amber-50 text-amber-700 border-amber-100" onSwap={() => initiateSwap(currentDay.day, 'breakfast')} onEdit={() => setSelectedMealDetail({day: currentDay.day, type: 'breakfast', meal: currentDay.breakfast})} />
                   <TodayMealCard type="Lunch" meal={currentDay.lunch} icon="🥪" color="bg-blue-50 text-blue-700 border-blue-100" onSwap={() => initiateSwap(currentDay.day, 'lunch')} onEdit={() => setSelectedMealDetail({day: currentDay.day, type: 'lunch', meal: currentDay.lunch})} />
                   <TodayMealCard type="Dinner" meal={currentDay.dinner} icon="🍲" color="bg-rose-50 text-rose-700 border-rose-100" onSwap={() => initiateSwap(currentDay.day, 'dinner')} onEdit={() => setSelectedMealDetail({day: currentDay.day, type: 'dinner', meal: currentDay.dinner})} />
@@ -422,8 +424,8 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
                   )}
                 </div>
 
-                <div className="mt-12 p-6 bg-[#2563EB] rounded-2xl text-white shadow-xl shadow-blue-200">
-                  <h3 className="text-lg font-bold mb-3 flex items-center gap-2">
+                <div className="mt-8 sm:mt-12 p-4 sm:p-6 bg-[#2563EB] rounded-2xl text-white shadow-xl shadow-blue-200">
+                  <h3 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-2">
                     <span>⚡️</span> Quick Prep Strategy
                   </h3>
                   <p className="text-blue-50 text-sm leading-relaxed italic">
@@ -434,23 +436,23 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
             ) : (
               /* Month/Calendar View */
               <>
-                <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-100">
-                  <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 sm:mb-8 pb-4 sm:pb-6 border-b border-gray-100">
+                  <div className="flex gap-1 sm:gap-2 flex-wrap">
                     {[1, 2, 3, 4].map(w => (
                       <button
                         key={w}
                         onClick={() => setSelectedWeek(w)}
-                        className={`px-6 py-2 rounded-full text-xs font-bold transition-all ${
+                        className={`px-4 sm:px-6 py-2 rounded-full text-xs font-bold transition-all ${
                           selectedWeek === w
                             ? 'bg-brand-dark text-white'
                             : 'text-slate-400 hover:text-slate-600 hover:bg-gray-50'
                         }`}
                       >
-                        Week {w}
+                        <span className="hidden sm:inline">Week </span>{w}
                       </button>
                     ))}
                   </div>
-                  <h2 className="text-2xl font-serif-brand">Week {selectedWeek}</h2>
+                  <h2 className="text-xl sm:text-2xl font-serif-brand">Week {selectedWeek}</h2>
                 </div>
 
                 <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4 transition-opacity duration-300 ${isShuffling ? 'opacity-40' : 'opacity-100'}`}>
@@ -496,19 +498,19 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
             )}
 
             {/* Grocery & Prep Sections */}
-            <div className="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-12 border-t border-gray-100 pt-12">
-              <div className="p-8 bg-white rounded-3xl border border-gray-100 shadow-sm">
-                <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                  <span className="text-2xl">🛒</span> Grocery List (Week {selectedWeek})
+            <div className="mt-8 sm:mt-16 grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-12 border-t border-gray-100 pt-6 sm:pt-12">
+              <div className="p-4 sm:p-8 bg-white rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm">
+                <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
+                  <span className="text-xl sm:text-2xl">🛒</span> Grocery List (Week {selectedWeek})
                 </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                   {currentWeekData?.groceryList.map((item, idx) => (
-                    <button 
-                      key={idx} 
+                    <button
+                      key={idx}
                       onClick={() => toggleCheck(item)}
-                      className="flex items-center gap-3 text-sm font-medium transition-all group text-left"
+                      className="flex items-center gap-3 text-sm font-medium transition-all group text-left py-1"
                     >
-                      <div className={`w-5 h-5 rounded flex items-center justify-center border-2 transition-all ${checkedItems[item] ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-gray-200 group-hover:border-gray-300'}`}>
+                      <div className={`w-5 h-5 rounded flex items-center justify-center border-2 transition-all flex-shrink-0 ${checkedItems[item] ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-gray-200 group-hover:border-gray-300'}`}>
                         {checkedItems[item] && <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>}
                       </div>
                       <span className={`${checkedItems[item] ? 'text-slate-300 line-through' : 'text-slate-600'}`}>{item}</span>
@@ -517,14 +519,14 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
                 </div>
               </div>
 
-              <div className="p-8 bg-[#FFF9E6] rounded-3xl border border-[#FFE7A3]">
-                <h3 className="text-xl font-bold mb-6 flex items-center gap-2 text-brand-dark">
-                  <span className="text-2xl">💡</span> Batch Prep Strategist
+              <div className="p-4 sm:p-8 bg-[#FFF9E6] rounded-2xl sm:rounded-3xl border border-[#FFE7A3]">
+                <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 flex items-center gap-2 text-brand-dark">
+                  <span className="text-xl sm:text-2xl">💡</span> Batch Prep Strategist
                 </h3>
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {currentWeekData?.batchPrepTips.map((tip, idx) => (
-                    <div key={idx} className="flex gap-4 items-start">
-                      <div className="w-6 h-6 rounded-full bg-white flex-shrink-0 flex items-center justify-center text-[10px] font-bold text-amber-700 shadow-sm">{idx + 1}</div>
+                    <div key={idx} className="flex gap-3 sm:gap-4 items-start">
+                      <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white flex-shrink-0 flex items-center justify-center text-[10px] font-bold text-amber-700 shadow-sm">{idx + 1}</div>
                       <p className="text-sm text-[#7A5C00] font-bold leading-relaxed">
                         {tip}
                       </p>
@@ -540,17 +542,17 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
       {/* Alternative Swap Modal */}
       {/* Meal Detail Modal */}
       {selectedMealDetail && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/40 backdrop-blur-md">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-100">
-            <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-brand-dark/40 backdrop-blur-md">
+          <div className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-100 max-h-[90vh] overflow-y-auto">
+            <div className="p-4 sm:p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50 sticky top-0">
               <div>
                 <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Day {selectedMealDetail.day} • {selectedMealDetail.type}</p>
-                <h3 className="text-2xl font-serif-brand text-brand-dark mt-1">{selectedMealDetail.meal.title}</h3>
+                <h3 className="text-xl sm:text-2xl font-serif-brand text-brand-dark mt-1">{selectedMealDetail.meal.title}</h3>
               </div>
               <button onClick={() => setSelectedMealDetail(null)} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-slate-500 hover:text-brand-dark transition-colors">✕</button>
             </div>
 
-            <div className="p-8">
+            <div className="p-4 sm:p-8">
               {editingMeal ? (
                 <div className="space-y-4">
                   <div>
@@ -652,17 +654,17 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
       )}
 
       {swappingTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/40 backdrop-blur-md">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-100">
-            <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-brand-dark/40 backdrop-blur-md">
+          <div className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-100 max-h-[90vh]">
+            <div className="p-4 sm:p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50 sticky top-0">
               <div>
-                <h3 className="text-2xl font-serif-brand text-brand-dark">Swap {swappingTarget.type}</h3>
+                <h3 className="text-xl sm:text-2xl font-serif-brand text-brand-dark">Swap {swappingTarget.type}</h3>
                 <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">Day {swappingTarget.day}</p>
               </div>
               <button onClick={() => setSwappingTarget(null)} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-slate-500 hover:text-brand-dark transition-colors">✕</button>
             </div>
-            
-            <div className="p-8 space-y-4 max-h-[60vh] overflow-y-auto">
+
+            <div className="p-4 sm:p-8 space-y-4 max-h-[60vh] overflow-y-auto">
               {isLoadingAlternatives ? (
                 <div className="py-12 text-center">
                   <div className="w-10 h-10 border-4 border-brand-dark border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
@@ -692,17 +694,17 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
 
       {/* Add Snack Modal */}
       {addingSnack && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/40 backdrop-blur-md">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-100">
-            <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-brand-dark/40 backdrop-blur-md">
+          <div className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-100 max-h-[90vh]">
+            <div className="p-4 sm:p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50 sticky top-0">
               <div>
-                <h3 className="text-2xl font-serif-brand text-brand-dark">Add Snack</h3>
+                <h3 className="text-xl sm:text-2xl font-serif-brand text-brand-dark">Add Snack</h3>
                 <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">Day {addingSnack}</p>
               </div>
               <button onClick={() => setAddingSnack(null)} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-slate-500 hover:text-brand-dark transition-colors">✕</button>
             </div>
 
-            <div className="p-8 space-y-4 max-h-[60vh] overflow-y-auto">
+            <div className="p-4 sm:p-8 space-y-4 max-h-[60vh] overflow-y-auto">
               <p className="text-sm text-slate-500 font-medium mb-4">Pick a suggested snack or add your own:</p>
               {suggestedSnacks.map((snack, idx) => (
                 <button
@@ -752,31 +754,31 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
 const TodayMealCard: React.FC<{ type: string, meal: Meal, icon: string, color: string, onSwap: () => void, onEdit: () => void }> = ({ type, meal, icon, color, onSwap, onEdit }) => (
   <div
     onClick={onEdit}
-    className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all group relative overflow-hidden cursor-pointer"
+    className="bg-white rounded-xl sm:rounded-2xl border border-gray-100 p-4 sm:p-6 shadow-sm hover:shadow-md transition-all group relative overflow-hidden cursor-pointer"
   >
-    <div className="flex items-start justify-between mb-4">
-      <div className={`px-3 py-1.5 rounded-lg ${color} flex items-center gap-2 text-xs font-black uppercase tracking-widest`}>
+    <div className="flex items-start justify-between mb-3 sm:mb-4">
+      <div className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg ${color} flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs font-black uppercase tracking-widest`}>
         <span>{icon}</span>
         {type}
       </div>
       <button
         onClick={(e) => { e.stopPropagation(); onSwap(); }}
-        className="text-slate-300 hover:text-brand-dark transition-colors"
+        className="text-slate-300 hover:text-brand-dark transition-colors p-1"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
       </button>
     </div>
-    <h3 className="text-xl font-bold text-brand-dark mb-2 group-hover:text-[#2563EB] transition-colors">{meal.title}</h3>
+    <h3 className="text-lg sm:text-xl font-bold text-brand-dark mb-2 group-hover:text-[#2563EB] transition-colors">{meal.title}</h3>
     {(meal.prepTime || meal.cookTime) && (
       <div className="flex gap-3 mb-2 text-xs font-medium">
         {meal.prepTime && <span className="text-slate-400">Prep: {meal.prepTime}</span>}
         {meal.cookTime && <span className="text-slate-400">Cook: {meal.cookTime}</span>}
       </div>
     )}
-    <p className="text-sm text-slate-500 leading-relaxed font-medium italic">
+    <p className="text-sm text-slate-500 leading-relaxed font-medium italic line-clamp-2 sm:line-clamp-none">
       {meal.prepNotes}
     </p>
-    <p className="text-xs text-slate-400 mt-3 group-hover:text-slate-500">Click to edit</p>
+    <p className="text-xs text-slate-400 mt-2 sm:mt-3 group-hover:text-slate-500">Tap to edit</p>
   </div>
 );
 
