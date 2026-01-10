@@ -294,10 +294,10 @@ const App: React.FC = () => {
     <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-100 mb-6 sm:mb-12">
       <div
         onClick={() => setStep(0)}
-        className="flex items-center gap-2 sm:gap-3 cursor-pointer hover:opacity-70 transition-opacity"
+        className="flex items-center gap-1 cursor-pointer hover:opacity-70 transition-opacity"
       >
-        <img src="/logo.png" alt="3meals" className="w-7 h-7 sm:w-8 sm:h-8 object-contain" />
-        <span className="font-display font-bold text-base sm:text-lg tracking-tight">3meals</span>
+        <img src="/logo.png" alt="3meals" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
+        <span className="font-display font-bold text-base sm:text-lg tracking-tight">meals</span>
       </div>
       <div className="flex items-center gap-1">
         <div className="w-12 sm:w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
@@ -321,9 +321,9 @@ const App: React.FC = () => {
         </div>
 
         <nav className="flex items-center justify-between px-4 sm:px-8 py-4 sm:py-6 max-w-7xl mx-auto relative z-10">
-          <div className="flex items-center gap-2">
-            <img src="/logo.png" alt="3meals" className="w-8 h-8 object-contain" />
-            <span className="font-display font-bold text-lg sm:text-xl">3meals</span>
+          <div className="flex items-center gap-1">
+            <img src="/logo.png" alt="3meals" className="w-10 h-10 sm:w-12 sm:h-12 object-contain" />
+            <span className="font-display font-bold text-xl sm:text-2xl">meals</span>
           </div>
           <div className="flex items-center gap-4">
             <button
@@ -357,7 +357,7 @@ const App: React.FC = () => {
                 onClick={() => setShowReturningUserModal(true)}
                 className="px-6 sm:px-8 py-4 sm:py-5 rounded-lg font-bold text-base sm:text-lg border-2 border-gray-200 text-slate-600 hover:border-gray-300 hover:bg-gray-50 transition-all"
               >
-                I already have a plan
+                View my plan
               </button>
             </div>
 
@@ -376,28 +376,45 @@ const App: React.FC = () => {
                   <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
                   <div className="w-3 h-3 rounded-full bg-green-400"></div>
                 </div>
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Plan Preview: Week 1</div>
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Your Week 1 Plan</div>
               </div>
-              <div className="p-6 space-y-4">
+              <div className="p-5 space-y-3">
                 {[
                   { day: 'Mon', b: 'Banana Oat Pancakes', l: 'Avocado Toast Strips', d: 'Sweet Potato Pasta' },
                   { day: 'Tue', b: 'Greek Yogurt & Berries', l: 'Cheesy Egg Bites', d: 'Mild Turkey Chili' },
                   { day: 'Wed', b: 'Apple Cinnamon Porridge', l: 'Spinach Turkey Roll-ups', d: 'Salmon Cakes & Peas' }
                 ].map((row, i) => (
-                  <div key={i} className="flex gap-4 items-center">
-                    <div className="w-10 text-xs font-bold text-slate-400 uppercase">{row.day}</div>
-                    <div className="flex-1 grid grid-cols-3 gap-2">
-                      <div className="h-10 bg-slate-50 rounded flex items-center px-2 text-[10px] font-medium text-slate-600 border border-slate-100">{row.b}</div>
-                      <div className="h-10 bg-[#EFF6FF] rounded flex items-center px-2 text-[10px] font-medium text-[#1E40AF] border border-[#DBEAFE]">{row.l}</div>
-                      <div className="h-10 bg-[#FFF9E6] rounded flex items-center px-2 text-[10px] font-medium text-[#7A5C00] border border-[#FFE7A3]">{row.d}</div>
+                  <div key={i} className="flex gap-3 items-center animate-in slide-in-from-right-4" style={{ animationDelay: `${i * 100}ms` }}>
+                    <div className="w-9 text-xs font-bold text-slate-400 uppercase">{row.day}</div>
+                    <div className="flex-1 grid grid-cols-3 gap-1.5">
+                      <div className="h-9 bg-amber-50 rounded flex items-center px-2 text-[9px] font-medium text-amber-700 border border-amber-100">{row.b}</div>
+                      <div className="h-9 bg-blue-50 rounded flex items-center px-2 text-[9px] font-medium text-blue-700 border border-blue-100">{row.l}</div>
+                      <div className="h-9 bg-rose-50 rounded flex items-center px-2 text-[9px] font-medium text-rose-700 border border-rose-100">{row.d}</div>
                     </div>
                   </div>
                 ))}
               </div>
-              <div className="bg-brand-dark p-4 text-white flex items-center justify-between">
-                <div className="text-xs font-bold">🛒 Automatic Grocery List Generated</div>
-                <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
-                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"/></svg>
+              {/* Prep Tip Banner */}
+              <div className="bg-emerald-50 border-t border-emerald-100 px-5 py-3 flex items-center gap-3">
+                <span className="text-lg">💡</span>
+                <div>
+                  <p className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider">Sunday Batch Prep</p>
+                  <p className="text-[11px] text-emerald-600">Cook oats & chop veggies for the week</p>
+                </div>
+              </div>
+              {/* Grocery List Section */}
+              <div className="bg-brand-dark p-4 text-white">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">🛒</span>
+                    <span className="text-sm font-bold">Grocery List</span>
+                  </div>
+                  <div className="px-2 py-0.5 bg-emerald-500 rounded text-[10px] font-bold">Auto-generated</div>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {['Oats', 'Bananas', 'Avocados', 'Eggs', 'Sweet potato', '+12 more'].map((item, i) => (
+                    <span key={i} className={`text-[10px] px-2 py-1 rounded ${i === 5 ? 'bg-white/20' : 'bg-white/10'}`}>{item}</span>
+                  ))}
                 </div>
               </div>
             </div>
