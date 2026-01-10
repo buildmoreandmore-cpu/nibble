@@ -311,8 +311,8 @@ const App: React.FC = () => {
     return (
       <div className="min-h-screen bg-white relative overflow-hidden">
         {/* Background logo watermark */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none">
-          <img src="/logo.png" alt="" className="w-[800px] h-[800px] object-contain" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.08] pointer-events-none">
+          <img src="/logo.png" alt="" className="w-[900px] h-[900px] object-contain" />
         </div>
 
         <nav className="flex items-center justify-between px-8 py-6 max-w-7xl mx-auto relative z-10">
