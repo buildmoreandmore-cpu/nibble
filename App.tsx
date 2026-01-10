@@ -294,10 +294,10 @@ const App: React.FC = () => {
     <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-100 mb-6 sm:mb-12">
       <div
         onClick={() => setStep(0)}
-        className="flex items-center gap-1 cursor-pointer hover:opacity-70 transition-opacity"
+        className="flex items-center cursor-pointer hover:opacity-70 transition-opacity"
       >
-        <img src="/logo.png" alt="3meals" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
-        <span className="font-display font-bold text-base sm:text-lg tracking-tight">meals</span>
+        <img src="/logo.png" alt="3" className="h-5 sm:h-6 w-auto object-contain" />
+        <span className="font-display font-bold text-lg sm:text-xl tracking-tight -ml-0.5">meals</span>
       </div>
       <div className="flex items-center gap-1">
         <div className="w-12 sm:w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
@@ -321,9 +321,9 @@ const App: React.FC = () => {
         </div>
 
         <nav className="flex items-center justify-between px-4 sm:px-8 py-4 sm:py-6 max-w-7xl mx-auto relative z-10">
-          <div className="flex items-center gap-1">
-            <img src="/logo.png" alt="3meals" className="w-10 h-10 sm:w-12 sm:h-12 object-contain" />
-            <span className="font-display font-bold text-xl sm:text-2xl">meals</span>
+          <div className="flex items-center">
+            <img src="/logo.png" alt="3" className="h-7 sm:h-9 w-auto object-contain" />
+            <span className="font-display font-bold text-2xl sm:text-3xl -ml-1">meals</span>
           </div>
           <div className="flex items-center gap-4">
             <button
