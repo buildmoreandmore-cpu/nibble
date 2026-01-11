@@ -18,7 +18,7 @@ const getAI = () => {
 
 export const generateMealPlan = async (prefs: UserPreferences): Promise<FullMealPlan> => {
   const prompt = `
-    Create a 7-day meal plan for a ${prefs.age} child.
+    Create a 28-day (4 week) meal plan for a ${prefs.age} child.
 
     Child Details:
     - Eating Style: ${prefs.eatingStyle}
@@ -48,12 +48,14 @@ export const generateMealPlan = async (prefs: UserPreferences): Promise<FullMeal
     }
 
     Rules:
-    1. 7 days total (day 1-7).
-    2. No repeated main meals.
-    3. Age-appropriate textures.
-    4. Brief prep notes.
-    5. Grocery list should have 15-20 items covering all meals.
-    6. Include 4-5 practical batch prep tips for the week.
+    1. Generate exactly 28 days (day 1 through day 28).
+    2. Generate exactly 4 weeks of grocery lists and batch prep tips (week 1, 2, 3, 4).
+    3. No repeated main meals across the entire 28 days.
+    4. Age-appropriate textures for ${prefs.age}.
+    5. Brief prep notes for each meal.
+    6. Each week's grocery list should have 15-20 items covering that week's meals.
+    7. Include 4-5 practical batch prep tips per week.
+    8. Week 1 covers days 1-7, Week 2 covers days 8-14, Week 3 covers days 15-21, Week 4 covers days 22-28.
   `;
 
   const response = await getAI().models.generateContent({
