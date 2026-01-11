@@ -1,6 +1,6 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
-import { UserPreferences, FullMealPlan, Meal } from "../types";
+import { UserPreferences, FullMealPlan, Meal, FridgeMeal } from "../types";
 
 // Lazy initialization to prevent crashes when API key is not set
 let ai: GoogleGenAI | null = null;
@@ -123,6 +123,52 @@ export const getMealAlternatives = async (
   });
 
   // Extract text using the .text property (do not use .text())
+  const jsonStr = response.text || '';
+  return JSON.parse(jsonStr);
+};
+
+export const getFridgeIdeas = async (
+  ingredients: string,
+  prefs: UserPreferences
+): Promise<FridgeMeal[]> => {
+  const prompt = `
+    A parent has these ingredients in their fridge/pantry: ${ingredients}
+
+    Their child is ${prefs.age} with eating style: ${prefs.eatingStyle}.
+    ALLERGIES (must completely avoid): ${prefs.allergies || 'None'}
+    Foods they dislike: ${prefs.hatesGags || 'None'}
+    Cooking capacity: ${prefs.cookingSituation}
+    Dietary preferences: ${prefs.dietaryPreferences || 'None'}
+
+    Suggest 4 simple, realistic meal ideas using these ingredients.
+    Consider age-appropriate textures and portion sizes.
+    Keep prep notes brief and practical.
+    Focus on what can actually be made with the listed ingredients.
+  `;
+
+  const response = await getAI().models.generateContent({
+    model: "gemini-2.0-flash",
+    contents: prompt,
+    config: {
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.ARRAY,
+        items: {
+          type: Type.OBJECT,
+          properties: {
+            title: { type: Type.STRING },
+            prepNotes: { type: Type.STRING },
+            ingredientsUsed: {
+              type: Type.ARRAY,
+              items: { type: Type.STRING }
+            }
+          },
+          required: ["title", "prepNotes", "ingredientsUsed"]
+        }
+      }
+    }
+  });
+
   const jsonStr = response.text || '';
   return JSON.parse(jsonStr);
 };

@@ -39,3 +39,9 @@ export interface FullMealPlan {
   days: DailyPlan[];
   weeks: WeeklyData[];
 }
+
+export interface FridgeMeal {
+  title: string;
+  prepNotes: string;
+  ingredientsUsed: string[];
+}

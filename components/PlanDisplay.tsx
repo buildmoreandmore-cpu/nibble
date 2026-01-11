@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import { FullMealPlan, DailyPlan, WeeklyData, Meal, UserPreferences } from '../types';
-import { getMealAlternatives } from '../services/geminiService';
+import { FullMealPlan, DailyPlan, WeeklyData, Meal, UserPreferences, FridgeMeal } from '../types';
+import { getMealAlternatives, getFridgeIdeas } from '../services/geminiService';
 import { jsPDF } from 'jspdf';
 
 interface PlanDisplayProps {
@@ -36,6 +36,13 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
   const [selectedMealDetail, setSelectedMealDetail] = useState<{day: number, type: string, meal: Meal} | null>(null);
   const [editingMeal, setEditingMeal] = useState<{day: number, type: string, title: string, prepNotes: string} | null>(null);
   const [addingSnack, setAddingSnack] = useState<number | null>(null);
+
+  // Fridge Ideas state
+  const [showFridgeModal, setShowFridgeModal] = useState(false);
+  const [fridgeIngredients, setFridgeIngredients] = useState('');
+  const [fridgeIdeas, setFridgeIdeas] = useState<FridgeMeal[]>([]);
+  const [isLoadingFridge, setIsLoadingFridge] = useState(false);
+  const [fridgeError, setFridgeError] = useState<string | null>(null);
 
   const handleSaveEdit = () => {
     if (!editingMeal) return;
@@ -180,6 +187,14 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
         </div>
 
         <div className="flex items-center gap-2 sm:gap-4">
+          <button
+            onClick={() => setShowFridgeModal(true)}
+            className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 bg-emerald-500 text-white rounded-lg text-xs sm:text-sm font-bold shadow-lg hover:bg-emerald-600 transition-all active:scale-95"
+          >
+            <span className="text-base">🧊</span>
+            <span className="hidden sm:inline">Fridge Ideas</span>
+            <span className="sm:hidden">Fridge</span>
+          </button>
           <button
             onClick={() => {
               const doc = new jsPDF();
@@ -743,6 +758,95 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
                   Add Custom Snack
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Fridge Ideas Modal */}
+      {showFridgeModal && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-brand-dark/40 backdrop-blur-md">
+          <div className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-100 max-h-[90vh] flex flex-col">
+            <div className="p-4 sm:p-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
+              <div>
+                <h3 className="text-xl sm:text-2xl font-serif-brand text-brand-dark flex items-center gap-2">
+                  <span>🧊</span> Fridge Ideas
+                </h3>
+                <p className="text-slate-400 text-xs font-medium mt-1">What ingredients do you have?</p>
+              </div>
+              <button
+                onClick={() => {
+                  setShowFridgeModal(false);
+                  setFridgeIngredients('');
+                  setFridgeIdeas([]);
+                  setFridgeError(null);
+                }}
+                className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-slate-500 hover:text-brand-dark transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-4 sm:p-6 flex-1 overflow-y-auto">
+              <textarea
+                value={fridgeIngredients}
+                onChange={(e) => setFridgeIngredients(e.target.value)}
+                placeholder="e.g., chicken, broccoli, rice, cheese, eggs..."
+                rows={3}
+                className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-emerald-400 outline-none font-medium resize-none mb-4"
+              />
+
+              <button
+                onClick={async () => {
+                  if (!fridgeIngredients.trim()) return;
+                  setIsLoadingFridge(true);
+                  setFridgeError(null);
+                  setFridgeIdeas([]);
+                  try {
+                    const ideas = await getFridgeIdeas(fridgeIngredients, userPrefs);
+                    setFridgeIdeas(ideas);
+                  } catch (err) {
+                    console.error('Failed to get fridge ideas:', err);
+                    setFridgeError('Something went wrong. Please try again.');
+                  } finally {
+                    setIsLoadingFridge(false);
+                  }
+                }}
+                disabled={isLoadingFridge || !fridgeIngredients.trim()}
+                className="w-full py-3 bg-emerald-500 text-white rounded-xl font-bold hover:bg-emerald-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {isLoadingFridge ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Finding ideas...
+                  </>
+                ) : (
+                  'Get Meal Ideas'
+                )}
+              </button>
+
+              {fridgeError && (
+                <p className="text-red-500 text-sm font-medium mt-4 text-center">{fridgeError}</p>
+              )}
+
+              {fridgeIdeas.length > 0 && (
+                <div className="mt-6 space-y-4">
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Meal Ideas</p>
+                  {fridgeIdeas.map((idea, idx) => (
+                    <div key={idx} className="p-4 rounded-2xl border-2 border-gray-100 hover:border-emerald-200 hover:bg-emerald-50/50 transition-all">
+                      <h4 className="font-bold text-brand-dark mb-2">{idea.title}</h4>
+                      <p className="text-sm text-slate-600 mb-3 leading-relaxed">{idea.prepNotes}</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {idea.ingredientsUsed.map((ing, i) => (
+                          <span key={i} className="text-[10px] px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full font-medium">
+                            {ing}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
