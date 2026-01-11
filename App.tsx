@@ -343,7 +343,7 @@ const App: React.FC = () => {
             </h1>
 
             <p className="text-base sm:text-lg md:text-xl text-slate-500 max-w-xl mb-8 sm:mb-10 font-medium leading-relaxed">
-              Stop googling "toddler dinner ideas" at 9 PM. We create realistic 30-day meal plans customized for your child's age, likes, and your cooking capacity.
+              Stop googling "toddler dinner ideas" at 9 PM. We create realistic 30-day meal plans customized for your child's age, likes, and your cooking capacity. <span className="hidden sm:inline">No subscriptions. No deliveries. Just a plan that works.</span>
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
@@ -425,6 +425,44 @@ const App: React.FC = () => {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Why Not Meal Delivery - Mobile */}
+            <div className="mt-12 md:hidden bg-slate-50 rounded-2xl p-6 border border-slate-100">
+              <h3 className="text-lg font-serif-brand text-brand-dark mb-3">Why not meal delivery?</h3>
+              <p className="text-sm text-slate-600 mb-5">
+                Services like Little Spoon and Nurture Life are great — if you've got <span className="font-bold">$300/month</span> to spend.
+              </p>
+              <p className="text-sm text-slate-600 mb-5">
+                3meals is for parents who want to cook, but don't want to <em>think</em> about cooking. We give you the plan. You use your groceries. You save hundreds.
+              </p>
+              <div className="space-y-2">
+                {[
+                  'No subscriptions',
+                  'No deliveries to track',
+                  'No food your kid won\'t eat sitting in the fridge',
+                  'Just a plan that works for YOUR child',
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <svg className="w-4 h-4 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    <span className="text-sm text-slate-700 font-medium">{item}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-5 pt-5 border-t border-slate-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-slate-400 uppercase font-bold tracking-wider">Meal delivery</p>
+                    <p className="text-lg font-bold text-slate-400 line-through">$300/mo</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-emerald-600 uppercase font-bold tracking-wider">3meals</p>
+                    <p className="text-lg font-bold text-emerald-600">Free</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
