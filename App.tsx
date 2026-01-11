@@ -522,6 +522,110 @@ const App: React.FC = () => {
           </div>
         </main>
 
+        {/* Why Not Meal Delivery - Desktop Full Width Section */}
+        <section className="hidden md:block max-w-7xl mx-auto px-4 sm:px-6 pb-16 relative z-10">
+          <div className="bg-slate-50 rounded-3xl p-8 lg:p-12 border border-slate-100">
+            <div className="flex items-center justify-between gap-12">
+              {/* Left side - Content */}
+              <div className="flex-1">
+                <h3 className="text-2xl lg:text-3xl font-serif-brand text-brand-dark mb-4">
+                  Why not meal delivery?
+                </h3>
+                <p className="text-slate-600 mb-6 max-w-xl">
+                  Services like Little Spoon and Nurture Life are great — if you've got
+                  <strong> $300/month</strong> to spend. 3meals is for parents who want to cook,
+                  but don't want to <em>think</em> about cooking.
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  {['No subscriptions', 'No deliveries', 'No wasted food', 'Your groceries'].map((item, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <svg className="w-5 h-5 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"/>
+                      </svg>
+                      <span className="text-slate-700 font-medium">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right side - Price comparison */}
+              <div className="flex-shrink-0">
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 text-center">
+                  <div className="mb-4 pb-4 border-b border-slate-100">
+                    <p className="text-xs text-slate-400 uppercase font-bold tracking-wider mb-1">Meal delivery</p>
+                    <p className="text-3xl font-bold text-slate-400 line-through">$300/mo</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-emerald-600 uppercase font-bold tracking-wider mb-1">3meals</p>
+                    <p className="text-3xl font-bold text-emerald-600">Free</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ Section */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 pb-16 sm:pb-24 relative z-10">
+          <div className="max-w-3xl mx-auto">
+            <h3 className="text-2xl sm:text-3xl font-serif-brand text-brand-dark mb-8 text-center">
+              Frequently Asked Questions
+            </h3>
+            <div className="space-y-3">
+              {[
+                {
+                  q: 'What is 3meals?',
+                  a: '3meals creates personalized 30-day meal plans for babies and toddlers. You tell us your child\'s age, what they like, what they won\'t eat, and how much time you have to cook — we give you a complete plan with grocery lists and prep tips.'
+                },
+                {
+                  q: 'How is this different from meal delivery services?',
+                  a: 'Services like Little Spoon and Nurture Life deliver pre-made food — convenient, but $200-400/month. 3meals gives you the plan; you use your own groceries. Same result (a month of meals figured out), fraction of the cost, and you control exactly what goes into your child\'s food.'
+                },
+                {
+                  q: 'What ages is this for?',
+                  a: '3meals works for babies starting solids (around 6 months) through toddlers and preschoolers (up to 4-5 years). We adjust textures, portions, and meal complexity based on your child\'s age and eating style.'
+                },
+                {
+                  q: 'What if my child has allergies?',
+                  a: 'We ask about allergies and dietary restrictions upfront. Your plan will never include foods you\'ve marked as off-limits — whether that\'s dairy, nuts, gluten, or anything else.'
+                },
+                {
+                  q: 'What if my toddler is a picky eater?',
+                  a: 'We ask what foods your child actually likes and what they refuse. Your plan is built around their real preferences — not idealized "kid-friendly" meals they\'ll never touch.'
+                },
+                {
+                  q: 'Do I have to cook everything from scratch?',
+                  a: 'Nope. We ask about your cooking capacity upfront. If you select "I\'m just surviving," you\'ll get ultra-simple meals. If you have more bandwidth, we can include batch prep and more variety.'
+                },
+                {
+                  q: 'What do I actually get?',
+                  a: 'A full 30-day meal plan with breakfast, lunch, dinner, and snacks for every day. Plus simple prep notes, weekly grocery lists, and batch prep tips. View it online or print it out.'
+                },
+                {
+                  q: 'How much does it cost?',
+                  a: 'It\'s free! No subscription. No recurring charges. Just a personalized plan for your child.'
+                },
+                {
+                  q: 'Who made this?',
+                  a: '3meals was built by a parent who got tired of googling "toddler dinner ideas" at 9 PM. Built it for my own family and decided to share it in case it helps other parents too.'
+                }
+              ].map((faq, i) => (
+                <details key={i} className="group bg-white border border-slate-200 rounded-xl overflow-hidden">
+                  <summary className="flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-slate-50 transition-colors">
+                    <span className="font-bold text-brand-dark text-sm sm:text-base pr-4">{faq.q}</span>
+                    <svg className="w-5 h-5 text-slate-400 flex-shrink-0 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                  </summary>
+                  <div className="px-5 pb-4 text-sm sm:text-base text-slate-600 leading-relaxed">
+                    {faq.a}
+                  </div>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Returning User Modal */}
         {showReturningUserModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/40 backdrop-blur-md">
