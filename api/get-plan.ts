@@ -1,13 +1,13 @@
-import { Redis } from '@upstash/redis';
+import { createClient } from '@supabase/supabase-js';
 
 export const config = {
   runtime: 'edge',
 };
 
-const redis = new Redis({
-  url: process.env.STORAGE_URL || process.env.KV_REST_API_URL || '',
-  token: process.env.STORAGE_TOKEN || process.env.KV_REST_API_TOKEN || '',
-});
+const supabase = createClient(
+  process.env.SUPABASE_URL || '',
+  process.env.SUPABASE_ANON_KEY || ''
+);
 
 export default async function handler(request: Request) {
   if (request.method !== 'POST') {
@@ -25,22 +25,23 @@ export default async function handler(request: Request) {
     }
 
     // Fetch stored plan by email
-    const data = await redis.get(`plan:${email}`);
+    const { data, error } = await supabase
+      .from('user_plans')
+      .select('meal_plan, preferences')
+      .eq('email', email)
+      .single();
 
-    if (!data) {
+    if (error || !data) {
       return new Response(JSON.stringify({ exists: false }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
-    // Parse if string, otherwise use as-is
-    const parsed = typeof data === 'string' ? JSON.parse(data) : data;
-
     return new Response(JSON.stringify({
       exists: true,
-      mealPlan: parsed.mealPlan,
-      prefs: parsed.prefs,
+      mealPlan: data.meal_plan,
+      prefs: data.preferences,
     }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },

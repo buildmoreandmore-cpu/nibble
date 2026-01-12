@@ -1,13 +1,13 @@
-import { Redis } from '@upstash/redis';
+import { createClient } from '@supabase/supabase-js';
 
 export const config = {
   runtime: 'edge',
 };
 
-const redis = new Redis({
-  url: process.env.STORAGE_URL || process.env.KV_REST_API_URL || '',
-  token: process.env.STORAGE_TOKEN || process.env.KV_REST_API_TOKEN || '',
-});
+const supabase = createClient(
+  process.env.SUPABASE_URL || '',
+  process.env.SUPABASE_ANON_KEY || ''
+);
 
 export default async function handler(request: Request) {
   if (request.method !== 'GET') {
@@ -15,12 +15,23 @@ export default async function handler(request: Request) {
   }
 
   try {
-    // Get all emails from the list
-    const emails = await redis.lrange('email_list', 0, -1);
+    // Get all users from the table
+    const { data, error } = await supabase
+      .from('user_plans')
+      .select('email, updated_at')
+      .order('updated_at', { ascending: false });
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return new Response(JSON.stringify({ error: 'Failed to fetch emails' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
 
     return new Response(JSON.stringify({
-      count: emails.length,
-      emails: emails.map(e => typeof e === 'string' ? JSON.parse(e) : e)
+      count: data?.length || 0,
+      emails: data?.map(row => ({ email: row.email, timestamp: row.updated_at })) || []
     }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },

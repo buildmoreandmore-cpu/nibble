@@ -1,13 +1,13 @@
-import { Redis } from '@upstash/redis';
+import { createClient } from '@supabase/supabase-js';
 
 export const config = {
   runtime: 'edge',
 };
 
-const redis = new Redis({
-  url: process.env.STORAGE_URL || process.env.KV_REST_API_URL || '',
-  token: process.env.STORAGE_TOKEN || process.env.KV_REST_API_TOKEN || '',
-});
+const supabase = createClient(
+  process.env.SUPABASE_URL || '',
+  process.env.SUPABASE_ANON_KEY || ''
+);
 
 export default async function handler(request: Request) {
   if (request.method !== 'POST') {
@@ -24,16 +24,25 @@ export default async function handler(request: Request) {
       });
     }
 
-    const timestamp = new Date().toISOString();
+    // Upsert user plan (insert or update if email exists)
+    const { error } = await supabase
+      .from('user_plans')
+      .upsert({
+        email,
+        meal_plan: mealPlan,
+        preferences: prefs,
+        updated_at: new Date().toISOString(),
+      }, {
+        onConflict: 'email'
+      });
 
-    // Store full user data (meal plan + prefs) with email as key
-    if (mealPlan && prefs) {
-      await redis.set(`plan:${email}`, JSON.stringify({ mealPlan, prefs, timestamp }));
+    if (error) {
+      console.error('Supabase error:', error);
+      return new Response(JSON.stringify({ error: 'Failed to save plan' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
-
-    // Keep email tracking for admin purposes
-    await redis.hset('emails', { [email]: timestamp });
-    await redis.lpush('email_list', JSON.stringify({ email, timestamp }));
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
