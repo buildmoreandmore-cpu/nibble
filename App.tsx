@@ -430,10 +430,6 @@ const App: React.FC = () => {
 
             {/* Fridge Ideas Feature - Mobile */}
             <div className="mt-12 md:hidden bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-6 border border-emerald-100">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-2xl">🧊</span>
-                <span className="text-[10px] px-2 py-1 bg-emerald-500 text-white rounded-full font-bold uppercase">New</span>
-              </div>
               <h3 className="text-lg font-serif-brand text-brand-dark mb-2">What's in your fridge?</h3>
               <p className="text-sm text-slate-600 mb-4">
                 Tell us what ingredients you have — we'll suggest meal ideas that work for your child.
@@ -606,9 +602,6 @@ const App: React.FC = () => {
             <div className="relative md:flex md:items-center md:gap-12">
               {/* Left side - Content */}
               <div className="flex-1 mb-8 md:mb-0">
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-500 text-white rounded-full text-xs font-bold uppercase tracking-wider mb-4">
-                  <span>New Feature</span>
-                </div>
                 <h3 className="text-2xl sm:text-3xl lg:text-4xl font-serif-brand text-brand-dark mb-4">
                   What's in your fridge?
                 </h3>
@@ -645,8 +638,7 @@ const App: React.FC = () => {
               {/* Right side - Visual */}
               <div className="md:flex-shrink-0 md:w-80">
                 <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-                  <div className="bg-emerald-500 px-4 py-3 flex items-center gap-2">
-                    <span className="text-xl">🧊</span>
+                  <div className="bg-emerald-500 px-4 py-3">
                     <span className="text-white font-bold text-sm">Fridge Ideas</span>
                   </div>
                   <div className="p-4 space-y-3">

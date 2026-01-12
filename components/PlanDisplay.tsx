@@ -191,7 +191,6 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
             onClick={() => setShowFridgeModal(true)}
             className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 bg-emerald-500 text-white rounded-lg text-xs sm:text-sm font-bold shadow-lg hover:bg-emerald-600 transition-all active:scale-95"
           >
-            <span className="text-base">🧊</span>
             <span className="hidden sm:inline">Fridge Ideas</span>
             <span className="sm:hidden">Fridge</span>
           </button>
@@ -769,8 +768,8 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan, onReset, userPrefs }) =
           <div className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-100 max-h-[90vh] flex flex-col">
             <div className="p-4 sm:p-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
               <div>
-                <h3 className="text-xl sm:text-2xl font-serif-brand text-brand-dark flex items-center gap-2">
-                  <span>🧊</span> Fridge Ideas
+                <h3 className="text-xl sm:text-2xl font-serif-brand text-brand-dark">
+                  Fridge Ideas
                 </h3>
                 <p className="text-slate-400 text-xs font-medium mt-1">What ingredients do you have?</p>
               </div>
